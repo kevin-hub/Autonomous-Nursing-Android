@@ -1,3 +1,5 @@
 pocketsphinx
 pyaudio
 catkin_pkg
+rospkg
+pyyaml
