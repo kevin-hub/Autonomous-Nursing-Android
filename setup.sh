@@ -7,7 +7,7 @@ sudo apt-get update -y # To get the latest package
 
 # Setup ROS environment
 
-catkin_make
+#catkin_make
 
 BASEDIR=$(dirname "$0")
 echo "Current Directory = $BASEDIR"
@@ -24,4 +24,4 @@ pip install -r requirements.txt
 sudo apt-get install ros-kinetic-sound-play -y
 
 # Installing the dependencies for sound
-rosdep install sound_play
+sudo usr/bin/rosdep install sound_play
