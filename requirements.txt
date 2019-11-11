@@ -1,0 +1,3 @@
+pocketsphinx
+pyaudio
+catkin_pkg
