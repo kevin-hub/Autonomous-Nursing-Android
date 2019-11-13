@@ -19,6 +19,11 @@ echo "Current Directory = $BASEDIR"
 sudo apt-get install python python-all-dev python-pip build-essential swig git libpulse-dev libasound2-dev portaudio19-dev python3-pyaudio -y
 #etc.
 
+# Vision Dependencies, Python 2.7.1
+sudo apt-get install build-essential
+sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+
 pip install -r requirements.txt
 
 sudo apt-get install ros-kinetic-sound-play -y

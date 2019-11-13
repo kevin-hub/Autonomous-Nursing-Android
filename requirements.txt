@@ -3,3 +3,4 @@ pyaudio
 catkin_pkg
 rospkg
 pyyaml
+opencv-python
