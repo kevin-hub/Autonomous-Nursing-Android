@@ -5,3 +5,4 @@ install/*
 .catkin_workspace
 src/CMakeLists.txt
 gpeechkey.json
+.DS_Store
