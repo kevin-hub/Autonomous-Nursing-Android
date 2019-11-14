@@ -1,5 +1,7 @@
 build/*
 config/*
 devel/*
+install/*
 .catkin_workspace
 src/CMakeLists.txt
+gpeechkey.json

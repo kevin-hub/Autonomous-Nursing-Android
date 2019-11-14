@@ -4,3 +4,4 @@ catkin_pkg
 rospkg
 pyyaml
 opencv-python
+google-cloud-speech
