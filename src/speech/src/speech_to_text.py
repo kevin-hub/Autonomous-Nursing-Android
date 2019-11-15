@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 import rospy
 from std_msgs.msg import String
-
-
 import sys
-import rospy
 from sound_play.msg import SoundRequest
 from sound_play.libsoundplay import SoundClient
 
@@ -20,10 +17,6 @@ def callback(data):
     volume = 2.0
     s = data.data
 
-    print ('Saying: %s' % s)
-    print ('Voice: %s' % voice)
-    print ('Volme: %s' % volume)
-
     soundhandle.say(s, voice, volume)
     rospy.sleep(3)
 
@@ -36,7 +29,7 @@ def listener():
     # run simultaneously.
     rospy.init_node('Output', anonymous=True)
 
-    rospy.Subscriber("chatter", String, callback)
+    rospy.Subscriber("speech_out", String, callback)
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()

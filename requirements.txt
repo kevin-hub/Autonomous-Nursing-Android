@@ -5,3 +5,4 @@ rospkg
 pyyaml
 opencv-python
 google-cloud-speech
+spacy
