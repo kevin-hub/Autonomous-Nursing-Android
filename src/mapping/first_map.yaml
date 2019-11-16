@@ -1,6 +1,0 @@
-image: first_map.pgm #file name of image
-resolution: 0.01 # meters per pixel in image
-origin: [0.0, 0.0, 0.0] # 2D pose of bottom left pixel (x,y,theta)
-occupied_thresh: 0.65 # pixels with more than this are considered to be occupied
-free_thresh: 0.196 # pixels with less than this are considered to be empty.
-negate: 0 # changes formula so that darkness corresponds with emptyness instead of fullness
