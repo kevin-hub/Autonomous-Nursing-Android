@@ -1,0 +1,3 @@
+<launch>
+<node name = "vel_publisher" pkg = "base_movement" type = "twist_publisher_test.py" output = "screen" />
+</launch>

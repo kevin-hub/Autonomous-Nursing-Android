@@ -6,3 +6,4 @@ install/*
 src/CMakeLists.txt
 gpeechkey.json
 .DS_Store
+src/arm_movement/*
