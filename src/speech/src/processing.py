@@ -6,9 +6,9 @@ from spacy.matcher import PhraseMatcher
 from std_msgs.msg import String
 
 def incoming_speech_callback(data):
-    rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
     ## Collect the incoming data
     incoming_sentence = nlp(data.data.decode('utf-8'))
+    print('Recieved: ', data.data.decode('utf-8'))
 
     matches = matcher(incoming_sentence)
 
@@ -25,14 +25,12 @@ def incoming_speech_callback(data):
 def main():
 
     rospy.init_node('NLP', anonymous=True)
-    #Speech Input
-    
+    #NPL Input
     print('Starting the Subscriber')
     rospy.Subscriber("nlp_in", String, incoming_speech_callback)
     
-    #Speech Output
+    #NLP Output
     speech_pub = rospy.Publisher("nlp_out", String, queue_size=10)
-
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
@@ -44,4 +42,5 @@ if __name__ == '__main__':
     terms = ["Water".decode('utf-8'), "Book".decode('utf-8') , "Hello".decode('utf-8')]
     patterns = [nlp.make_doc(text) for text in terms]
     matcher.add("TerminologyList".decode('utf-8'), None, *patterns)
+    rospy.sleep(2)
     main()

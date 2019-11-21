@@ -79,7 +79,6 @@ class GSpeech(object):
         language_code='en-US')
 
       response = self.client.recognize(config, audio)
-      print type(response)
       alternatives = response.results[0].alternatives if response.results else []
       for alt in alternatives:
         confidence = alt.confidence * 100

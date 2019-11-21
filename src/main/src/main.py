@@ -8,11 +8,13 @@ from std_msgs.msg import String
 #Vision nodes will be contacted directly from the vision nodes
 
 def incoming_command_callback(data):
-    # Access the Data object to retrieve command
-    if data.data == 'book': pass
+    # Create a publisher to be able to send to other nodes
+    speech_pub = rospy.Publisher("speech_out", String, queue_size=10)
+
+    if data.data == 'book': speech_pub("Hello There! I think you want a book")
     if data.data == 'hello': speech_pub("Hello There! I hope you're well")
-    if data.data == 'water': pass
-    
+    if data.data == 'water': speech_pub("Hello There! I think you would like some water?)
+
     rospy.sleep(1)
 
 def main():
@@ -22,7 +24,6 @@ def main():
     rospy.Subscriber("nlp_out", String, incoming_command_callback)
     
     #Speech Output
-    speech_pub = rospy.Publisher("speech_out", String, queue_size=10)
 
     # TODO: Add the additional publishers to connect with the other nodes
     # #Movement Outputs
