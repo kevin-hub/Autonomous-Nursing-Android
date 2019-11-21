@@ -39,7 +39,7 @@ if __name__ == '__main__':
     # Initilising the spacy library 
     nlp = spacy.load("en_core_web_sm")
     matcher = PhraseMatcher(nlp.vocab, attr='LOWER')
-    terms = ["Water".decode('utf-8'), "Book".decode('utf-8') , "Hello".decode('utf-8')]
+    terms = ["Bottle".decode('utf-8'), "Book".decode('utf-8') , "Hello".decode('utf-8'), "Bear".decode('utf-8'), "Teddy".decode('utf-8')]
     patterns = [nlp.make_doc(text) for text in terms]
     matcher.add("TerminologyList".decode('utf-8'), None, *patterns)
     rospy.sleep(2)

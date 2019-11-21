@@ -1,0 +1,20 @@
+
+
+<launch>
+
+    
+    <group ns="maps">
+        <include file="$(find ridgeback_navigation)/launch/amcl_demo.launch">
+            <arg name="map_file" value="/home/prl1/Documents/EE4-Human-Centered-Robotics/src/base_movement/src/maps/mymap.yaml"/>
+        </include> 
+    </group>
+
+
+    <group ns="local">
+        <include file="$(find ridgeback_viz)/launch/view_robot.launch">
+            <arg name="config" value="localization"/>
+        </include> 
+    </group>
+    
+
+</launch> 
