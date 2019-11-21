@@ -1,0 +1,3 @@
+<launch>
+<node name = "wp_publisher" pkg = "base_movement" type = "waypoint_test.py" output = "screen" />
+</launch>
