@@ -6,6 +6,8 @@ from spacy.matcher import PhraseMatcher
 from std_msgs.msg import String
 
 def incoming_speech_callback(data):
+    #NLP Output
+    speech_pub = rospy.Publisher("nlp_out", String, queue_size=10)
     ## Collect the incoming data
     incoming_sentence = nlp(data.data.decode('utf-8'))
     print('Recieved: ', data.data.decode('utf-8'))
@@ -29,8 +31,6 @@ def main():
     print('Starting the Subscriber')
     rospy.Subscriber("nlp_in", String, incoming_speech_callback)
     
-    #NLP Output
-    speech_pub = rospy.Publisher("nlp_out", String, queue_size=10)
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()

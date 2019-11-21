@@ -22,7 +22,7 @@ class GSpeech(object):
     rospy.init_node('gspeech')
     # configure ROS settings
     rospy.on_shutdown(self.shutdown)
-    self.pub_speech = rospy.Publisher('npl_in', String, queue_size=10)
+    self.pub_speech = rospy.Publisher('nlp_in', String, queue_size=10)
     self.pub_confidence = rospy.Publisher('~confidence', Int8, queue_size=10)
     self.srv_start = rospy.Service('~start', Empty, self.start)
     self.srv_stop = rospy.Service('~stop', Empty, self.stop)

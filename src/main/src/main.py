@@ -10,12 +10,13 @@ from std_msgs.msg import String
 def incoming_command_callback(data):
     # Create a publisher to be able to send to other nodes
     speech_pub = rospy.Publisher("speech_out", String, queue_size=10)
-
-    if data.data == 'book': speech_pub("Hello There! I think you want a book")
-    if data.data == 'hello': speech_pub("Hello There! I hope you're well")
-    if data.data == 'water': speech_pub("Hello There! I think you would like some water?)
-
-    rospy.sleep(1)
+    rospy.sleep(2)
+    if data.data == 'book': 
+        speech_pub.publish("Hello There! I think you want a book")
+    if data.data == 'hello':
+        speech_pub.publish("Hello There! I hope you're well")
+    if data.data == 'water':
+        speech_pub.publish("Hello There! I think you would like some water")
 
 def main():
 
