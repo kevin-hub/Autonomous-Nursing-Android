@@ -9,6 +9,10 @@ import tf
 speech_pub = rospy.Publisher("speech_out", String, queue_size=10)
 waypoint_pub = rospy.Publisher('/waypoint',PoseStamped,queue_size=10)
 
+# Feeling we're going to need flags to make sure there's traciblity of where the robot is
+onRoute = False
+locations = [] 
+
 
 #The main node of the system, responsible for the connecting all the nodes accordingly to create a control flow through the system.
 #The main node will get inputs from Speech and will provide outputs to movements, speech and UI.
@@ -16,6 +20,7 @@ waypoint_pub = rospy.Publisher('/waypoint',PoseStamped,queue_size=10)
 
 def incoming_command_callback(data):
     global speech_pub
+    global locations
     rospy.sleep(2)
     if data.data == 'book': 
         speech_pub.publish("Hello There! I think you want a book")
@@ -26,8 +31,23 @@ def incoming_command_callback(data):
     if data.data == 'bear' or data.data == 'teddy':
         speech_pub.publish("Hello There! I think you would like the teddy bear")
 
-    location = db_function(data.data)
-    publish_waypoint(location)
+    # Waits for the speech to respond
+    rospy.sleep(2)
+    # location = db_function(data.data)
+    # # Going to have to create a while loop to make sure we're waiting for each value to finish
+    # publish_waypoint(location)
+
+    # if onRoute == False:
+    #     # while(onRoute):
+    #     #     # Wait for flag to have reached
+    #     #     # Continue with the rest of the tasks
+    # else:
+    #     # Add next destination to the queue
+    #     locations.append(data.data)
+
+
+
+    # speech_pub.publish("I'm on my way!")
     # height = location[3] - Future extension 
 
 def main():
@@ -50,8 +70,7 @@ def db_function(command):
     c.execute('SELECT pos_x,pos_y,pos_theta,height FROM items NATURAL JOIN locations WHERE item_id=?', t)
     test2 = c.fetchone()
     item_location = test2 # Get the item information
-    print('Item Location: ')
-    print (item_location)
+
     return item_location # return tuple of values
 
 
@@ -77,7 +96,6 @@ def publish_waypoint(location_tuple):
     waypoint_pub.publish(pose)
 
 if __name__ == '__main__':
-    print(('Starting the Main Node'))
     rospy.loginfo('Starting the Main Node')
     rospy.sleep(2)
     main()
