@@ -26,7 +26,7 @@ sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libp
 
 pip install -r requirements.txt
 
-sudo apt-get install ros-melodic-sound-play -y
+sudo apt-get install ros-kinetic-sound-play -y
 
 # Installing the dependencies for sound
 sudo usr/bin/rosdep install sound_play
