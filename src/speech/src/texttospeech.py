@@ -7,8 +7,9 @@ from std_msgs.msg import String
 from sound_play.msg import SoundRequest
 from sound_play.libsoundplay import SoundClient
 
+
 def callback(data):
-    synthesis_input = texttospeech.types.cloud_tts_pb2.SynthesisInput(text=data.data)
+    synthesis_input = texttospeech.types.SynthesisInput(text=data.data)
 
     voice = texttospeech.types.cloud_tts_pb2.VoiceSelectionParams(
         language_code='en_US',
@@ -24,8 +25,7 @@ def callback(data):
         out.write(response.audio_content)
         print('Audio content written to file "output.mp3"')
 
-    sc.playWave('/home/prl1/Documents/EE4-Human-Centered-Robotics/output.mp3')
-
+    sc.playWave('/home/joe/Documents/EE4-Human-Centered-Robotics/output.mp3')
 
 
 if __name__ == '__main__':
@@ -34,10 +34,8 @@ if __name__ == '__main__':
         sc = SoundClient()
         rospy.init_node('Output', anonymous=True)
         rospy.Subscriber("speech_out", String, callback)
-
         rospy.spin()
     except rospy.ROSInterruptException:
         pass
     except KeyboardInterrupt:
         sys.exit(0)
-

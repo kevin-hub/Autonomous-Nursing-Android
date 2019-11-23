@@ -23,13 +23,13 @@ def incoming_command_callback(data):
     global locations
     rospy.sleep(2)
     if data.data == 'book': 
-        speech_pub.publish("Hello There! I think you want a book")
+        speech_pub.publish("Sure! I'll get you a book")
     if data.data == 'hello':
         speech_pub.publish("Hello There! I hope you're well")
     if data.data == 'bottle':
-        speech_pub.publish("Hello There! I think you would like some water")
+        speech_pub.publish("Okay, I'll grab some water")
     if data.data == 'bear' or data.data == 'teddy':
-        speech_pub.publish("Hello There! I think you would like the teddy bear")
+        speech_pub.publish("One teddy bear coming right up")
 
     # Waits for the speech to respond
     rospy.sleep(2)
