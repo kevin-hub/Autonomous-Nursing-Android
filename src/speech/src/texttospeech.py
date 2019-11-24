@@ -8,32 +8,37 @@ from sound_play.msg import SoundRequest
 from sound_play.libsoundplay import SoundClient
 
 
-def callback(data):
-    synthesis_input = texttospeech.types.SynthesisInput(text=data.data)
+class TTSInterfaceClient:
 
-    voice = texttospeech.types.cloud_tts_pb2.VoiceSelectionParams(
-        language_code='en_US',
-        name='en-US-Wavenet-F',
-        ssml_gender=texttospeech.enums.SsmlVoiceGender.NEUTRAL)
+    def __init__(self):
+        self.client = texttospeech.TextToSpeechClient()
+        self.sc = SoundClient()
 
-    audio_config = texttospeech.types.cloud_tts_pb2.AudioConfig(
-        audio_encoding=texttospeech.enums.AudioEncoding.MP3)
+        self.voice = texttospeech.types.cloud_tts_pb2.VoiceSelectionParams(
+            language_code='en_US',
+            name='en-US-Wavenet-F',
+            ssml_gender=texttospeech.enums.SsmlVoiceGender.NEUTRAL)
 
-    response = client.synthesize_speech(synthesis_input, voice, audio_config)
+        self.audio_config = texttospeech.types.cloud_tts_pb2.AudioConfig(
+            audio_encoding=texttospeech.enums.AudioEncoding.MP3)
 
-    with open('output.mp3', 'wb') as out:
-        out.write(response.audio_content)
-        print('Audio content written to file "output.mp3"')
+        rospy.init_node('Output', anonymous=True)
+        rospy.Subscriber("speech_out", String, self.callback)
 
-    sc.playWave('/home/joe/Documents/EE4-Human-Centered-Robotics/output.mp3')
+    def callback(self, data):
+        synthesis_input = texttospeech.types.SynthesisInput(text=data.data)
+        response = self.client.synthesize_speech(synthesis_input, self.voice, self.audio_config)
+
+        with open('output.mp3', 'wb') as out:
+            out.write(response.audio_content)
+            print('Audio content written to file "output.mp3"')
+
+        self.sc.playWave('/home/joe/Documents/EE4-Human-Centered-Robotics/output.mp3')
 
 
 if __name__ == '__main__':
     try:
-        client = texttospeech.TextToSpeechClient()
-        sc = SoundClient()
-        rospy.init_node('Output', anonymous=True)
-        rospy.Subscriber("speech_out", String, callback)
+        tts = TTSInterfaceClient()
         rospy.spin()
     except rospy.ROSInterruptException:
         pass

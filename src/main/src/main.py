@@ -34,7 +34,6 @@ def incoming_command_callback(data):
         speech_pub.publish("I'm sorry, I can't help you with that")
 
     # Waits for the speech to respond
-    rospy.sleep(2)
     # location = db_function(data.data)
     # # Going to have to create a while loop to make sure we're waiting for each value to finish
     # publish_waypoint(location)

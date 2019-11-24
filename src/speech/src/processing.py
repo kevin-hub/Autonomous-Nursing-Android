@@ -22,7 +22,7 @@ def incoming_speech_callback(data):
         span_str = str(span).lower()
 
         speech_pub.publish(span_str)
-    rospy.sleep(1)
+    rospy.sleep(0.2)
 
 def main():
 
@@ -30,7 +30,6 @@ def main():
     #NPL Input
     print('Starting the Subscriber')
     rospy.Subscriber("nlp_in", String, incoming_speech_callback)
-    
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
