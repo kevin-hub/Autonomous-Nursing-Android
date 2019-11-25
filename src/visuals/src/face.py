@@ -5,6 +5,7 @@ import sys
 import rospy
 import cv2
 from sensor_msgs.msg import Image
+from std_msgs.msg import String
 from cv_bridge import CvBridge, CvBridgeError
 import rospkg
 
@@ -19,14 +20,14 @@ class image_conv:
         #cv2.imshow("Image window", self.image)
 
         self.image_pub = rospy.Publisher("visuals/Face", Image, queue_size=10)
-        rospy.Subscriber("speech_out", String, self.callback)
+        rospy.Subscriber("nlp_out", String, self.callback)
         rospy.init_node('face', anonymous=True)
         time.sleep(1)
 
-    def callback(data):
+    def callback(self, data):
         self.image = cv2.imread(path + data.data + '.jpg')
         try:
-            ros_image = self.bridge.cv2_to_imgmsg(self.image, encoding = "bgr8")
+            ros_image = self.bridge.cv2_to_imgmsg(self.image, encoding="bgr8")
             self.image_pub.publish(ros_image)
         except CvBridgeError as e:
             print(e)
