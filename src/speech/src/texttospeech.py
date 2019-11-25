@@ -26,7 +26,7 @@ class TTSInterfaceClient:
         self.audio_config = texttospeech.types.cloud_tts_pb2.AudioConfig(
             audio_encoding=texttospeech.enums.AudioEncoding.MP3)
 
-        rospy.init_node('Output', anonymous=True)
+        rospy.init_node('Output')
         rospy.Subscriber("speech_out", String, self.callback)
 
     def callback(self, data):
