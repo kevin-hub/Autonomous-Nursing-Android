@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import time
+import sys
 import rospy
 import cv2
 from sensor_msgs.msg import Image
@@ -24,13 +25,17 @@ class image_conv:
 
     def callback(data):
         self.image = cv2.imread(path + data.data + '.jpg')
-
+        try:
+            ros_image = self.bridge.cv2_to_imgmsg(self.image, encoding = "bgr8")
+        except CvBridgeError as e:
+            print(e)
+        self.image_pub.publish(ros_image)
 
 if __name__ == '__main__':
     conv = image_conv()
     try:
-        ros_image = conv.bridge.cv2_to_imgmsg(conv.image, encoding = "bgr8")
-    except CvBridgeError as e:
-        print(e)
-    conv.image_pub.publish(ros_image)
-    rospy.spin()
+        rospy.spin()
+    except rospy.ROSInterruptException:
+        pass
+    except KeyboardInterrupt:
+        sys.exit(0)
