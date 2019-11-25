@@ -20,16 +20,16 @@ class image_conv:
 
         self.image_pub = rospy.Publisher("visuals/Face", Image, queue_size=10)
         rospy.Subscriber("speech_out", String, self.callback)
-        rospy.init_node('face',anonymous=True)
+        rospy.init_node('face', anonymous=True)
         time.sleep(1)
 
     def callback(data):
         self.image = cv2.imread(path + data.data + '.jpg')
         try:
             ros_image = self.bridge.cv2_to_imgmsg(self.image, encoding = "bgr8")
+            self.image_pub.publish(ros_image)
         except CvBridgeError as e:
             print(e)
-        self.image_pub.publish(ros_image)
 
 if __name__ == '__main__':
     conv = image_conv()
