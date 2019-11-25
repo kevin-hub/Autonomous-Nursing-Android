@@ -37,8 +37,8 @@ class TTSInterfaceClient:
 
 
 if __name__ == '__main__':
+    tts = TTSInterfaceClient()
     try:
-        tts = TTSInterfaceClient()
         rospy.spin()
     except rospy.ROSInterruptException:
         pass
