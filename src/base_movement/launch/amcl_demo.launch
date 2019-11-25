@@ -1,0 +1,13 @@
+<launch>
+
+  <!-- Run the map server -->
+ <arg name="map_file" default="$(find base_movement)/src/maps/mymap.yaml"/>
+ <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
+  <!--- Run AMCL -->
+ <include file="$(find base_movement)/launch/include/amcl.launch" />
+
+  <!--- Run Move Base -->
+ <include file="$(find base_movement)/launch/include/move_base.launch" />
+
+</launch>

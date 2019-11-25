@@ -31,9 +31,9 @@ def publish_waypoint(x,y,theta):
 
 if __name__=='__main__':
     try:
-        x = -5
-        y = 2
-        theta = 1.5
+        x = 4.7
+        y = 3.08
+        theta = -0.76
         publish_waypoint(x,y,theta)
         
     except rospy.ROSInterruptException:

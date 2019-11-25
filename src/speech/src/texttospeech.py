@@ -33,7 +33,7 @@ class TTSInterfaceClient:
             out.write(response.audio_content)
             print('Audio content written to file "output.mp3"')
 
-        self.sc.playWave('/home/joe/Documents/EE4-Human-Centered-Robotics/output.mp3')
+        self.sc.playWave('/home/prl1/Documents/EE4-Human-Centered-Robotics/output.mp3')
 
 
 if __name__ == '__main__':

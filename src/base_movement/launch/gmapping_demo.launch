@@ -1,0 +1,9 @@
+<launch>
+
+  <!--- Run gmapping -->
+  <include file="$(find base_movement)/launch/include/gmapping.launch" />
+
+  <!--- Run Move Base -->
+  <include file="$(find base_movement)/launch/include/move_base.launch" />
+
+</launch>
