@@ -22,7 +22,7 @@ class image_conv:
         self.image_pub = rospy.Publisher("visuals/Face", Image, queue_size=10)
         rospy.Subscriber("nlp_out", String, self.callback)
         rospy.init_node('face')
-        time.sleep(1)
+        time.sleep()
 
     def callback(self, data):
         self.image = cv2.imread(path + data.data + '.jpg')
