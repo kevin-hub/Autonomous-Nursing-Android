@@ -3,6 +3,8 @@
   <node name="Listen" pkg="speech" type="g_speech.py"/>
   <node name="NLP" pkg="speech" type="processing.py"/>
   <node name="CentralNode" pkg="main" type="main.py"/>
+  <node name="video_publisher" pkg="visuals" type="publish_face.py"/>
+  <node name="image_view" pkg="image_view" type="image_view"><remap from="image" to="/visuals/image_raw" /></node>
   <!-- <node name="Listen" pkg="speech" type="speech.py "/>  Alternative option without NLP -->
   <node name="Output" pkg="speech" type="texttospeech.py" output="screen" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/>
   <node name="soundplay_node" pkg="sound_play" type="soundplay_node.py"/>

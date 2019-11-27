@@ -7,6 +7,7 @@ import rospy
 import rospkg
 import time
 import sys
+import threading
 
 from sensor_msgs.msg import Image
 from std_msgs.msg import String
@@ -15,34 +16,40 @@ from cv_bridge import CvBridge, CvBridgeError
 bridge = CvBridge()
 
 rospack = rospkg.RosPack()
-path = rospack.get_path('visuals') + '/images/'
+path = rospack.get_path('visuals') + '/media/'
 
 class face:
-    """Publish a video as ROS messages.
-    """
+    """Publish a video as ROS messages. """
 
     def __init__(self):
         # Set up node.
         rospy.init_node("video_publisher", anonymous=True)
         self.img_pub = rospy.Publisher("/visuals/image_raw", Image, queue_size=10)
+        self.video_file = '.mp4'
         rospy.Subscriber("nlp_out", String, self.callback)
 
-
     def callback(self, data):
-        video_file = path + data.data + '.mp4'
+        self.video_file = path + data.data + '.mp4'
         height = 600
         width = 1024
 
         # Open video.
-        video = cv2.VideoCapture(video_file)
+        video = cv2.VideoCapture(self.video_file)
 
         # Get frame rate.
         fps = video.get(cv2.CAP_PROP_FPS)
         rate = rospy.Rate(fps)
+        loop_thread = threading.Thread(target=self.loop_video, args=(self.video_file,height,width,video,rate))
+        loop_thread.start()
 
+    def loop_video(self,video_file,height,width,video,rate):
+        video_stop = self.video_file
         # Loop through video frames.
         while not rospy.is_shutdown() and video.grab():
             tmp, img = video.retrieve()
+
+            if video_stop != self.video_file:
+                break
 
             if not tmp:
                 print "Could not grab frame."
@@ -81,7 +88,7 @@ class face:
                 # Publish image.
                 img_msg = bridge.cv2_to_imgmsg(img_out, "bgr8")
                 img_msg.header.stamp = rospy.Time.now()
-                img_pub.publish(img_msg)
+                self.img_pub.publish(img_msg)
             except CvBridgeError as e:
                 print(e)
 
