@@ -41,7 +41,7 @@ class TTSInterfaceClient:
 
         self.sc.playWave(path + 'output.mp3')
         rospy.sleep(1)
-        os.remove(path + 'output.mp3')
+        #os.remove(path + 'output.mp3')
         print("Awaiting new phrase input...")
 
 #end of tts class
