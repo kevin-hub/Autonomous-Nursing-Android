@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+import os
 import roslib
 import rospkg
 from google.cloud import texttospeech
@@ -28,6 +29,7 @@ class TTSInterfaceClient:
 
         rospy.init_node('Output')
         rospy.Subscriber("speech_out", String, self.callback)
+        print("Awaiting new phrase input...")
 
     def callback(self, data):
         synthesis_input = texttospeech.types.SynthesisInput(text=data.data)
@@ -38,14 +40,20 @@ class TTSInterfaceClient:
             print('Audio content written to file "output.mp3"')
 
         self.sc.playWave(path + 'output.mp3')
+        rospy.sleep(1)
+        os.remove(path + 'output.mp3')
+        print("Awaiting new phrase input...")
 
 #end of tts class
 
+def main():
+    # declare TTS
+    tts = TTSInterfaceClient()
+    rospy.spin()
 
 if __name__ == '__main__':
-    tts = TTSInterfaceClient()
     try:
-        rospy.spin()
+        main()
     except rospy.ROSInterruptException:
         pass
     except KeyboardInterrupt:
