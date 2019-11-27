@@ -39,6 +39,8 @@ class TTSInterfaceClient:
 
         self.sc.playWave(path + 'output.mp3')
 
+#end of tts class
+
 
 if __name__ == '__main__':
     tts = TTSInterfaceClient()
