@@ -10,7 +10,7 @@ def publish_waypoint(x,y,theta):
     pose = PoseStamped()
     pose.header.seq = 1
     pose.header.stamp = rospy.Time.now()
-    pose.header.frame_id = "odom"
+    pose.header.frame_id = "map"
     pose.pose.position.x = x
     pose.pose.position.y = y
     pose.pose.position.z = 0
@@ -31,9 +31,9 @@ def publish_waypoint(x,y,theta):
 
 if __name__=='__main__':
     try:
-        x = 4.7
-        y = 3.08
-        theta = -0.76
+        x = -2.1
+        y = -1.1
+        theta = 0
         publish_waypoint(x,y,theta)
         
     except rospy.ROSInterruptException:
