@@ -80,7 +80,7 @@ class face:
                 img_out = img_rsz[diff:-diff-1, :, :]
             else:
                 # Resize image.
-                img_out = cv2.resize(img, (height, width))
+                img_out = cv2.resize(img, (width, height))
 
             assert img_out.shape[0:2] == (height, width)
 
