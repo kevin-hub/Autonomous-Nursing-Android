@@ -4,14 +4,14 @@ import sys
 from std_msgs.msg import String
 from geometry_msgs.msg import PoseStamped
 import sqlite3
-import tf 
+import tf
 
 speech_pub = rospy.Publisher("speech_out", String, queue_size=10)
 waypoint_pub = rospy.Publisher('/waypoint',PoseStamped,queue_size=10)
 
 # Feeling we're going to need flags to make sure there's traciblity of where the robot is
 onRoute = False
-locations = [] 
+locations = []
 
 
 #The main node of the system, responsible for the connecting all the nodes accordingly to create a control flow through the system.
@@ -21,7 +21,8 @@ locations = []
 def incoming_command_callback(data):
     global speech_pub
     global locations
-    if data.data == 'book': 
+    rospy.sleep(0.3)
+    if data.data == 'book':
         speech_pub.publish("Sure! I'll get you a book")
     if data.data == 'hello':
         speech_pub.publish("Hello There! I hope you're well")
@@ -30,7 +31,9 @@ def incoming_command_callback(data):
     if data.data == 'bear' or data.data == 'teddy':
         speech_pub.publish("One teddy bear coming right up")
     if data.data == 'help':
-        speech_pub.publish("I'm sorry, I can't help you with that")
+        speech_pub.publish("Calling the nurse, please wait")
+    if data.data == 'water':
+        speech_pub.publish("Okay, I'll grab some water")
 
     rospy.sleep(2)
 
@@ -50,21 +53,21 @@ def incoming_command_callback(data):
 
 
     # speech_pub.publish("I'm on my way!")
-    # height = location[3] - Future extension 
+    # height = location[3] - Future extension
 
 def main():
-    rospy.init_node('CentralNode', anonymous=True)
+    rospy.init_node('CentralNode')
     #Speech Input
     rospy.Subscriber("nlp_out", String, incoming_command_callback)
     # Create a publisher to be able to send to other nodes
-    
+
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
 
 def db_function(command):
     conn = sqlite3.connect('/home/prl1/Documents/EE4-Human-Centered-Robotics/src/main/src/world.db')
-    # Aim of the function is to fetch the correct information 
+    # Aim of the function is to fetch the correct information
     c = conn.cursor()
 
     t = (command,)

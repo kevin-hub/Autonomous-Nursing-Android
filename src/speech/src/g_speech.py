@@ -15,7 +15,7 @@ class GSpeech(object):
   def __init__(self):
     """Constructor"""
     # configure system commands
-    self.sox_cmd = "sox -r 16000 -c 1 -t alsa default recording.flac silence 1 0.1 1% 1 1.5 1%"
+    self.sox_cmd = "sox -r 16000 -c 1 -t alsa default recording.flac vad silence 1 0.01 1% 1 0.5t 1%"
     self.sox_args = shlex.split(self.sox_cmd)
     self.client = speech.SpeechClient()
     # start ROS node
@@ -118,4 +118,3 @@ if __name__ == '__main__':
     pass
   except KeyboardInterrupt:
     sys.exit(0)
-
