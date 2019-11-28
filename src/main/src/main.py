@@ -21,7 +21,6 @@ locations = []
 def incoming_command_callback(data):
     global speech_pub
     global locations
-    rospy.sleep(0.3)
     if data.data == 'book': 
         speech_pub.publish("Sure! I'll get you a book")
     if data.data == 'hello':
@@ -32,6 +31,8 @@ def incoming_command_callback(data):
         speech_pub.publish("One teddy bear coming right up")
     if data.data == 'help':
         speech_pub.publish("I'm sorry, I can't help you with that")
+
+    rospy.sleep(2)
 
     # Waits for the speech to respond
     # location = db_function(data.data)
@@ -81,7 +82,7 @@ def publish_waypoint(location_tuple):
     pose = PoseStamped()
     pose.header.seq = 1
     pose.header.stamp = rospy.Time.now()
-    pose.header.frame_id = "odom"
+    pose.header.frame_id = "map"
     pose.pose.position.x = location_tuple[0] # x position
     pose.pose.position.y = location_tuple[1] # y position
     pose.pose.position.z = 0

@@ -1,10 +1,10 @@
 <launch>
   <arg name="node_start_delay" default="2.0" />  
+  <node name="Output" pkg="speech" type="speech_to_text.py" output="screen"/>
   <node name="Listen" pkg="speech" type="g_speech.py"/>
   <node name="NLP" pkg="speech" type="processing.py"/>
   <node name="CentralNode" pkg="main" type="main.py"/>
   <!-- <node name="Listen" pkg="speech" type="speech.py "/>  Alternative option without NLP -->
-  <!-- <node name="Output" pkg="speech" type="texttospeech.py" output="screen" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' "/> -->
   <node name="soundplay_node" pkg="sound_play" type="soundplay_node.py"/>
     <!-- A delay function used to start all the seperate launchfiles --> 
 </launch>

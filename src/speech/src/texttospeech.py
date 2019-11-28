@@ -26,6 +26,7 @@ class TTSInterfaceClient:
         rospy.Subscriber("speech_out", String, self.callback)
 
     def callback(self, data):
+        print('PLaying Sound Now')
         synthesis_input = texttospeech.types.SynthesisInput(text=data.data)
         response = self.client.synthesize_speech(synthesis_input, self.voice, self.audio_config)
 
@@ -34,6 +35,8 @@ class TTSInterfaceClient:
             print('Audio content written to file "output.mp3"')
 
         self.sc.playWave('/home/prl1/Documents/EE4-Human-Centered-Robotics/output.mp3')
+
+        rospy.sleep(3)
 
 
 if __name__ == '__main__':
