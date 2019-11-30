@@ -22,7 +22,14 @@ class speech_processor:
                  "Help".decode('utf-8'),
                  "Water".decode('utf-8'),
                  "What".decode('utf-8'),
-                 "Name".decode('utf-8')]
+                 "Name".decode('utf-8'),
+                 "Nurse".decode('utf-8'),
+                 "Fuck".decode('utf-8'),
+                 "Thank".decode('utf-8'),
+                 "You".decode('utf-8'),
+                 "Anna".decode('utf-8'),
+                 "Be".decode('utf-8'),
+                 "Quiet".decode('utf-8')]
         self.patterns = [self.nlp.make_doc(text) for text in self.terms]
         self.matcher.add("TerminologyList".decode('utf-8'), None, *self.patterns)
         rospy.sleep(0.5)
@@ -31,8 +38,6 @@ class speech_processor:
         #NPL Input
         print('Starting the Subscriber')
         rospy.Subscriber("nlp_in", String, self.incoming_speech_callback)
-        rospy.Subscriber("face_ready", Bool, self.incoming_face_callback)
-        self.flag_recieved = False
         #NLP Output
         self.speech_pub = rospy.Publisher("nlp_out", String, queue_size=10)
 
@@ -56,14 +61,10 @@ class speech_processor:
         if len(span_str) == 0:
             self.speech_pub.publish("sorry")
         else:
+            keywords = ""
             for word in span_str:
-                while self.flag_recieved:
-                    rospy.sleep(0.01)
-                self.speech_pub.publish(word)
-                rospy.sleep(1)
-
-    def incoming_face_callback(self, data):
-        self.flag_recieved = data.data
+                keywords += word + " "
+            self.speech_pub.publish(keywords)
 
 # end of processor class
 
