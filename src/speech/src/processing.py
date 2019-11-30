@@ -10,7 +10,7 @@ class speech_processor:
 
     def __init__(self):
         # Initilising the spacy library
-        self.nlp = spacy.load("en_core_web_sm")
+        self.nlp = spacy.load("en_core_web_sm", disable=["ner"])
         self.matcher = PhraseMatcher(self.nlp.vocab, attr='LOWER')
         self.terms = ["Bottle".decode('utf-8'),
                  "Book".decode('utf-8') ,
@@ -19,7 +19,9 @@ class speech_processor:
                  "Teddy".decode('utf-8'),
                  "Thirsty".decode('utf-8'),
                  "Help".decode('utf-8'),
-                 "Water".decode('utf-8')]
+                 "Water".decode('utf-8'),
+                 "What".decode('utf-8'),
+                 "Name".decode('utf-8')]
         self.patterns = [self.nlp.make_doc(text) for text in self.terms]
         self.matcher.add("TerminologyList".decode('utf-8'), None, *self.patterns)
         rospy.sleep(0.5)
@@ -37,14 +39,20 @@ class speech_processor:
         print('Recieved: ', data.data.decode('utf-8'))
 
         matches = self.matcher(incoming_sentence)
+        span_str = []
+        i = 0
 
         for match_id, start, end in matches:
             span = incoming_sentence[start:end]
             # Span wil contain words that it matches with
             # Converts it to the lower case
             # We can publish this response to the next nodes
-            span_str = str(span).lower()
-            self.speech_pub.publish(span_str)
+            span_str.append(str(span).lower())
+            i += 1
+
+        for word in span_str:
+            self.speech_pub.publish(word)
+            rospy.sleep(2)
 
 # end of processor class
 

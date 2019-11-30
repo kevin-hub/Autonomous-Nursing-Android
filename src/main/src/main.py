@@ -7,6 +7,7 @@ import sqlite3
 import tf
 
 speech_pub = rospy.Publisher("speech_out", String, queue_size=10)
+face_pub = rospy.Publisher("file_out", String, queue_size=10)
 waypoint_pub = rospy.Publisher('/waypoint',PoseStamped,queue_size=10)
 
 # Feeling we're going to need flags to make sure there's traciblity of where the robot is
@@ -21,21 +22,30 @@ locations = []
 def incoming_command_callback(data):
     global speech_pub
     global locations
-    rospy.sleep(0.3)
+    items = 0
+    rospy.sleep(0.1)
     if data.data == 'book':
         speech_pub.publish("Sure! I'll get you a book")
-    if data.data == 'hello':
+        face_pub.publish("book.mp4")
+        items += 1
+    elif data.data == 'hello':
         speech_pub.publish("Hello There! I hope you're well")
-    if data.data == 'bottle' or data.data == 'thirsty':
+        face_pub.publish("hello.mp4")
+        items += 1
+    elif data.data == 'bottle' or data.data == 'thirsty' or data.data == 'water':
         speech_pub.publish("Okay, I'll grab some water")
-    if data.data == 'bear' or data.data == 'teddy':
+        face_pub.publish("water.mp4")
+        items += 1
+    elif data.data == 'bear' or data.data == 'teddy':
         speech_pub.publish("One teddy bear coming right up")
-    if data.data == 'help':
+        face_pub.publish("bear.mp4")
+        items += 1
+    elif data.data == 'help':
         speech_pub.publish("Calling the nurse, please wait")
-    if data.data == 'water':
-        speech_pub.publish("Okay, I'll grab some water")
+        face_pub.publish("help.mp4")
+        items +=1
 
-    rospy.sleep(2)
+    rospy.sleep(0.1)
 
     # Waits for the speech to respond
     # location = db_function(data.data)

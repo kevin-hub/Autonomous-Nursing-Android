@@ -11,6 +11,7 @@ import threading
 
 from sensor_msgs.msg import Image
 from std_msgs.msg import String
+from std_msgs.msg import Bool
 from cv_bridge import CvBridge, CvBridgeError
 
 bridge = CvBridge()
@@ -23,13 +24,16 @@ class face:
 
     def __init__(self):
         # Set up node.
-        rospy.init_node("video_publisher", anonymous=True)
+        rospy.init_node("VideoPublisher")
         self.img_pub = rospy.Publisher("/visuals/image_raw", Image, queue_size=10)
+        self.flag_pub = rospy.Publisher("face_ready", Bool, queue_size=10)
         self.video_file = '.mp4'
-        rospy.Subscriber("nlp_out", String, self.callback)
+        self.flag_recieved = False
+        rospy.Subscriber("speech_ready", Bool, self.flag_callback)
+        rospy.Subscriber("file_out", String, self.face_callback)
 
-    def callback(self, data):
-        self.video_file = path + data.data + '.mp4'
+    def face_callback(self, data):
+        self.video_file = path + data.data
         height = 600
         width = 1024
 
@@ -39,10 +43,19 @@ class face:
         # Get frame rate.
         fps = video.get(cv2.CAP_PROP_FPS)
         rate = rospy.Rate(fps)
-        loop_thread = threading.Thread(target=self.loop_video, args=(self.video_file,height,width,video,rate))
-        loop_thread.start()
+        self.flag_pub.publish(True)
+        while self.flag_recieved == False:
+            time.sleep(0.01)
 
-    def loop_video(self,video_file,height,width,video,rate):
+        loop_thread = threading.Thread(target=self.loop_video, args=(self.video_file, height, width, video, rate))
+        loop_thread.start()
+        self.flag_recieved = False
+
+    def flag_callback(self, data):
+        if data.data == True:
+            self.flag_recieved = True
+
+    def loop_video(self, video_file, height, width, video, rate):
         video_stop = self.video_file
         # Loop through video frames.
         while not rospy.is_shutdown() and video.grab():
