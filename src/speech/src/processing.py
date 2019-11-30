@@ -4,6 +4,7 @@ import sys
 import spacy
 from spacy.matcher import PhraseMatcher
 from std_msgs.msg import String
+from std_msgs.msg import Bool
 
 
 class speech_processor:
@@ -30,6 +31,8 @@ class speech_processor:
         #NPL Input
         print('Starting the Subscriber')
         rospy.Subscriber("nlp_in", String, self.incoming_speech_callback)
+        rospy.Subscriber("face_ready", Bool, self.incoming_face_callback)
+        self.flag_recieved = False
         #NLP Output
         self.speech_pub = rospy.Publisher("nlp_out", String, queue_size=10)
 
@@ -50,9 +53,17 @@ class speech_processor:
             span_str.append(str(span).lower())
             i += 1
 
-        for word in span_str:
-            self.speech_pub.publish(word)
-            rospy.sleep(2)
+        if len(span_str) == 0:
+            self.speech_pub.publish("sorry")
+        else:
+            for word in span_str:
+                while self.flag_recieved:
+                    rospy.sleep(0.01)
+                self.speech_pub.publish(word)
+                rospy.sleep(1)
+
+    def incoming_face_callback(self, data):
+        self.flag_recieved = data.data
 
 # end of processor class
 

@@ -5,6 +5,7 @@ from std_msgs.msg import String
 from geometry_msgs.msg import PoseStamped
 import sqlite3
 import tf
+from random import randrange
 
 speech_pub = rospy.Publisher("speech_out", String, queue_size=10)
 face_pub = rospy.Publisher("file_out", String, queue_size=10)
@@ -27,23 +28,30 @@ def incoming_command_callback(data):
     if data.data == 'book':
         speech_pub.publish("Sure! I'll get you a book")
         face_pub.publish("book.mp4")
-        items += 1
     elif data.data == 'hello':
         speech_pub.publish("Hello There! I hope you're well")
         face_pub.publish("hello.mp4")
-        items += 1
     elif data.data == 'bottle' or data.data == 'thirsty' or data.data == 'water':
         speech_pub.publish("Okay, I'll grab some water")
         face_pub.publish("water.mp4")
-        items += 1
     elif data.data == 'bear' or data.data == 'teddy':
         speech_pub.publish("One teddy bear coming right up")
         face_pub.publish("bear.mp4")
-        items += 1
     elif data.data == 'help':
         speech_pub.publish("Calling the nurse, please wait")
         face_pub.publish("help.mp4")
-        items +=1
+    elif data.data == 'sorry':
+        select = randrange(3)
+        if select == 0:
+            speech_pub.publish("Sorry, I didn't understand that")
+            face_pub.publish("sorry1.mp4")
+        elif select == 1:
+            speech_pub.publish("What was that?")
+            face_pub.publish("sorry2.mp4")
+        elif select == 2:
+            speech_pub.publish("I couldn't quite catch that")
+            face_pub.publish("sorry3.mp4")
+
 
     rospy.sleep(0.1)
 
