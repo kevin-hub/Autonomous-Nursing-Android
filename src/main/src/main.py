@@ -49,7 +49,7 @@ def incoming_command_callback(data):
         elif select == 2:
             speech_pub.publish("That's a bit fucking rude")
             face_pub.publish("sorry1.mp4")
-    elif len(words) > 3:
+    elif (len(words) > 3) or ("hello" in words and len(words)) > 4:
         select = randrange(3)
         if select == 0:
             speech_pub.publish("Okay, I'll get all those things")
