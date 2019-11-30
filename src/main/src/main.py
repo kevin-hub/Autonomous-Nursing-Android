@@ -71,22 +71,22 @@ def incoming_command_callback(data):
         face_pub.publish("sorry1.mp4")
         sleeping = True
     else:
-        if words[0] == 'book':
+        if 'book' in words:
             speech_pub.publish("Sure, I'll get you a book")
             face_pub.publish("book.mp4")
-        elif words[0] == 'hello':
+        elif 'hello' in words:
             speech_pub.publish("Hello There! I hope you're well")
             face_pub.publish("hello.mp4")
-        elif words[0] == 'bottle' or words[0] == 'thirsty' or words[0] == 'water':
+        elif 'bottle'  in words or 'thirsty'  in words or 'water' in words:
             speech_pub.publish("Okay, I'll grab some water")
             face_pub.publish("water.mp4")
-        elif words[0] == 'bear' or words[0] == 'teddy':
+        elif 'bear' in words or 'teddy' in words:
             speech_pub.publish("One teddy bear coming right up")
             face_pub.publish("bear.mp4")
-        elif words[0] == 'help' or words[0] == 'nurse':
+        elif 'help'  in words or 'nurse' in words:
             speech_pub.publish("Calling the nurse, please wait")
             face_pub.publish("help.mp4")
-        elif words[0] == 'sorry'or words[0] == 'what' or words[0] == 'name':
+        elif words[0] == 'sorry' or words[0] == 'what' or words[0] == 'name':
             select = randrange(3)
             if select == 0:
                 speech_pub.publish("Sorry, I didn't understand that")
