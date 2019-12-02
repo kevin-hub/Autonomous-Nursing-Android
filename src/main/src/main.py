@@ -2,6 +2,7 @@
 import rospy
 import sys
 from std_msgs.msg import String
+from std_msgs.msg import Int8
 from geometry_msgs.msg import PoseStamped
 import sqlite3
 import tf
@@ -17,21 +18,27 @@ locations = []
 
 # Sleeping flag
 sleeping = False
+# Number of matching nouns said in current input
+nouns = 0
 
 
 #The main node of the system, responsible for the connecting all the nodes accordingly to create a control flow through the system.
 #The main node will get inputs from Speech and will provide outputs to movements, speech and UI.
 #Vision nodes will be contacted directly from the vision nodes
 
+def noun_callback(data):
+    global nouns
+    nouns = data.data
+
 def incoming_command_callback(data):
     global speech_pub
     global locations
     global sleeping
+    global nouns
 
-    items = 0
-    rospy.sleep(0.1)
     words = data.data.split(" ")
 
+# Check if sleeping
     if sleeping == True:
         if "anna" in words:
             sleeping = False
@@ -49,54 +56,58 @@ def incoming_command_callback(data):
         elif select == 2:
             speech_pub.publish("That's a bit fucking rude")
             face_pub.publish("sorry1.mp4")
-    elif (len(words) > 3) or ("hello" in words and len(words)) > 4:
+
+    elif nouns > 1:
         select = randrange(3)
         if select == 0:
             speech_pub.publish("Okay, I'll get all those things")
-            face_pub.publish("sorry1.mp4")
+            face_pub.publish("many1.mp4")
         elif select == 1:
             speech_pub.publish("That's a lot of stuff you want")
-            face_pub.publish("sorry2.mp4")
+            face_pub.publish("many2.mp4")
         elif select == 2:
             speech_pub.publish("I'll be one minute")
-            face_pub.publish("sorry3.mp4")
+            face_pub.publish("many3.mp4")
+
     elif "name" in words and "what" in words:
         speech_pub.publish("My name is Anna")
         face_pub.publish("sorry1.mp4")
-    elif "thank" in words and "you" in words:
-        speech_pub.publish("You're welcome!")
-        face_pub.publish("sorry1.mp4")
+
     elif "be" in words and "quiet" in words:
         speech_pub.publish("Okay, I'll leave you for a bit")
         face_pub.publish("sorry1.mp4")
         sleeping = True
+
     else:
-        if 'book' in words:
+        if 'help' in words or 'nurse' in words:
+            speech_pub.publish("Calling the nurse, please wait")
+            face_pub.publish("help.mp4")
+        elif 'book' in words:
             speech_pub.publish("Sure, I'll get you a book")
             face_pub.publish("book.mp4")
-        elif 'hello' in words:
-            speech_pub.publish("Hello There! I hope you're well")
-            face_pub.publish("hello.mp4")
+        elif "thank" in words:
+            speech_pub.publish("You're welcome!")
+            face_pub.publish("sorry1.mp4")
         elif 'bottle'  in words or 'thirsty'  in words or 'water' in words:
             speech_pub.publish("Okay, I'll grab some water")
             face_pub.publish("water.mp4")
         elif 'bear' in words or 'teddy' in words:
             speech_pub.publish("One teddy bear coming right up")
             face_pub.publish("bear.mp4")
-        elif 'help'  in words or 'nurse' in words:
-            speech_pub.publish("Calling the nurse, please wait")
-            face_pub.publish("help.mp4")
-        elif words[0] == 'sorry' or words[0] == 'what' or words[0] == 'name':
+        elif 'hello' in words:
+            speech_pub.publish("Hello There! I hope you're well")
+            face_pub.publish("hello.mp4")
+        else:
             select = randrange(3)
             if select == 0:
                 speech_pub.publish("Sorry, I didn't understand that")
                 face_pub.publish("sorry1.mp4")
             elif select == 1:
                 speech_pub.publish("What was that?")
-                face_pub.publish("sorry2.mp4")
+                face_pub.publish("sorry1.mp4")
             elif select == 2:
                 speech_pub.publish("I couldn't quite catch that")
-                face_pub.publish("sorry3.mp4")
+                face_pub.publish("sorry1.mp4")
 
 
     rospy.sleep(0.1)
@@ -122,6 +133,7 @@ def incoming_command_callback(data):
 def main():
     rospy.init_node('CentralNode')
     #Speech Input
+    rospy.Subscriber("noun_number", Int8, noun_callback)
     rospy.Subscriber("nlp_out", String, incoming_command_callback)
     # Create a publisher to be able to send to other nodes
 
@@ -166,5 +178,5 @@ def publish_waypoint(location_tuple):
 
 if __name__ == '__main__':
     rospy.loginfo('Starting the Main Node')
-    rospy.sleep(2)
+    rospy.sleep(1)
     main()

@@ -7,6 +7,7 @@ import rospy
 import rospkg
 import sys
 import threading
+from random import randrange
 
 from sensor_msgs.msg import Image
 from std_msgs.msg import String
@@ -133,18 +134,17 @@ class face:
         # Dimensions and path
         height = 600
         width = 1024
-        video = cv2.VideoCapture(path + "idle.mp4")
+        video = cv2.VideoCapture(path + "idle" + str(randrange(4) + 1) + ".mp4")
         # Get frame rate.
         fps = video.get(cv2.CAP_PROP_FPS)
         rate = rospy.Rate(fps)
         # Loop through video frames.
         while not rospy.is_shutdown() and video.grab():
-            tmp, img = video.retrieve()
-
             # Break when new video requested
             if self.pause_idle == True:
                 return
-
+            # Grab frame
+            tmp, img = video.retrieve()
             if not tmp:
                 print "Could not grab frame."
                 break

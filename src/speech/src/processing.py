@@ -5,6 +5,7 @@ import spacy
 from spacy.matcher import PhraseMatcher
 from std_msgs.msg import String
 from std_msgs.msg import Bool
+from std_msgs.msg import Int8
 
 
 class speech_processor:
@@ -26,7 +27,6 @@ class speech_processor:
                  "Nurse".decode('utf-8'),
                  "Fuck".decode('utf-8'),
                  "Thank".decode('utf-8'),
-                 "You".decode('utf-8'),
                  "Anna".decode('utf-8'),
                  "Be".decode('utf-8'),
                  "Quiet".decode('utf-8')]
@@ -40,6 +40,7 @@ class speech_processor:
         rospy.Subscriber("nlp_in", String, self.incoming_speech_callback)
         #NLP Output
         self.speech_pub = rospy.Publisher("nlp_out", String, queue_size=10)
+        self.noun_pub = rospy.Publisher("noun_number", Int8, queue_size=10)
 
     def incoming_speech_callback(self, data):
         ## Collect the incoming data
@@ -48,15 +49,19 @@ class speech_processor:
 
         matches = self.matcher(incoming_sentence)
         span_str = []
-        i = 0
+        nouns = 0
 
         for match_id, start, end in matches:
             span = incoming_sentence[start:end]
+            if incoming_sentence[start].pos_ == 'NOUN':
+                nouns += 1
             # Span wil contain words that it matches with
             # Converts it to the lower case
             # We can publish this response to the next nodes
             span_str.append(str(span).lower())
-            i += 1
+
+        self.noun_pub.publish(nouns)
+        rospy.sleep(0.1)
 
         if len(span_str) == 0:
             self.speech_pub.publish("sorry")
