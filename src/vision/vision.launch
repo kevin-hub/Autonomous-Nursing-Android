@@ -1,4 +1,4 @@
 <launch>
-<node name = "random_number" pkg = "vision" type = "publisher.py" output = "screen" />
-<node name = "random_subscriber" pkg = "vision" type = "subscriber.py" output = "screen" />
+<node name = "talker" pkg = "vision" type = "detect_object_in_rs.py" output = "screen" />
+<node name = "listener" pkg = "vision" type = "subscriber.py" output = "screen" />
 </launch>

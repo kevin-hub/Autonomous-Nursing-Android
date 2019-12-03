@@ -1,0 +1,4 @@
+<launch>
+<node name = "listener" pkg = "vision" type = "detect_object_in_rs_ros.py" output = "screen" />
+<node name = "Controller" pkg = "vision" type = "subscriber.py" output = "screen" />
+</launch>
