@@ -28,7 +28,7 @@ class face:
         # Set up node and publishers.
         rospy.init_node("VideoPublisher")
         rospy.on_shutdown(self.shutdown)
-        self.img_pub = rospy.Publisher("/visuals/image_raw", Image, queue_size=10)
+        self.img_pub = rospy.Publisher("robot/xdisplay", Image, queue_size=10)
         self.flag_pub = rospy.Publisher("face_ready", Bool, queue_size=10)
         self.video_file = '.mp4'
         # Flags
