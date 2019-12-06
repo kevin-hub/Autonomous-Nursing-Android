@@ -1,0 +1,4 @@
+<launch>
+<node name="random_pub" pkg="baxter_arms" type="pub.py" output="screen" />
+<node name="random_sub" pkg="baxter_arms" type="sub.py" output="screen" />
+</launch>
