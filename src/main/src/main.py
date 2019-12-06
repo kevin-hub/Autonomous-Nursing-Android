@@ -113,9 +113,10 @@ def incoming_command_callback(data):
     rospy.sleep(0.1)
 
     # Waits for the speech to respond
-    # location = db_function(data.data)
+    #location = db_function(data.data)
     # # Going to have to create a while loop to make sure we're waiting for each value to finish
-    # publish_waypoint(location)
+    location = (-1.7,-0.66,0.9,0)
+    publish_waypoint(location)
 
     # if onRoute == False:
     #     # while(onRoute):
@@ -166,7 +167,7 @@ def publish_waypoint(location_tuple):
     pose.pose.position.y = location_tuple[1] # y position
     pose.pose.position.z = 0
 
-    quaternion = tf.transformations.quaternion_from_euler(0, 0, location_tuple[2]) # angle
+    quaternion = tf.transformations.quaternion_from_euler(0, 0,location_tuple[2]) # angle
     pose.pose.orientation.x = quaternion[0]
     pose.pose.orientation.y = quaternion[1]
     pose.pose.orientation.z = quaternion[2]
