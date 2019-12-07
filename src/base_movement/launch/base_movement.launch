@@ -17,5 +17,5 @@
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find base_movement)/rviz/$(arg config).rviz" />
 
   <!--- set up the waypoint bridge -->
-    <node name = "wp_publisher" pkg = "base_movement" type = "waypoint_test.py" output = "screen" />
+    <node name = "wp_publisher" pkg = "base_movement" type = "waypoint_bridge.py" output = "screen" />
 </launch> 
