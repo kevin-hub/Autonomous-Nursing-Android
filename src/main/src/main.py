@@ -45,18 +45,6 @@ def incoming_command_callback(data):
         else:
             return
 
-    if "fuck" in words:
-        select = randrange(3)
-        if select == 0:
-            speech_pub.publish("Fuck you")
-            face_pub.publish("sorry1.mp4")
-        elif select == 1:
-            speech_pub.publish("Fuck off you cunt")
-            face_pub.publish("sorry1.mp4")
-        elif select == 2:
-            speech_pub.publish("That's a bit fucking rude")
-            face_pub.publish("sorry1.mp4")
-
     elif nouns > 1:
         select = randrange(3)
         if select == 0:
