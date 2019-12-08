@@ -13,9 +13,9 @@ c.execute('''CREATE TABLE locations
 
 # Insert a row of data
 #under items
-c.execute("INSERT INTO items VALUES ('bottle','A','500')")
-c.execute("INSERT INTO items VALUES ('book','B','300')")
-c.execute("INSERT INTO items VALUES ('teddy','C','100')")
+c.execute("INSERT INTO items VALUES ('remote','FRONT','500')")
+c.execute("INSERT INTO items VALUES ('book','RIGHT','300')")
+c.execute("INSERT INTO items VALUES ('teddy','FRONT','100')")
 #under
 c.execute("INSERT INTO locations VALUES ('HOME','-2.62','-1.82','0','1')")
 c.execute("INSERT INTO locations VALUES ('BEDSIDE_NEXT_TO','-2.4','-0.8','0.75','1')")
