@@ -12,6 +12,7 @@ speech_pub = rospy.Publisher("speech_out", String, queue_size=10)
 face_pub = rospy.Publisher("file_out", String, queue_size=10)
 waypoint_pub = rospy.Publisher('/waypoint',PoseStamped,queue_size=10)
 
+
 # Feeling we're going to need flags to make sure there's traciblity of where the robot is
 onRoute = False
 locations = []
@@ -20,11 +21,16 @@ locations = []
 sleeping = False
 # Number of matching nouns said in current input
 nouns = 0
-
+most_recent_pose = ""
 
 #The main node of the system, responsible for the connecting all the nodes accordingly to create a control flow through the system.
 #The main node will get inputs from Speech and will provide outputs to movements, speech and UI.
 #Vision nodes will be contacted directly from the vision nodes
+
+base_movement = base_movement_manager()
+
+def update_pose_estimate_callback(pose_estimate):
+    most_recent_pose = pose_estimate.data
 
 def noun_callback(data):
     global nouns
@@ -35,7 +41,9 @@ def incoming_command_callback(data):
     global locations
     global sleeping
     global nouns
-
+    global base_movement
+    global most_recent_pose
+    
     words = data.data.split(" ")
 
 # Check if sleeping
@@ -44,18 +52,6 @@ def incoming_command_callback(data):
             sleeping = False
         else:
             return
-
-    if "fuck" in words:
-        select = randrange(3)
-        if select == 0:
-            speech_pub.publish("Fuck you")
-            face_pub.publish("sorry1.mp4")
-        elif select == 1:
-            speech_pub.publish("Fuck off you cunt")
-            face_pub.publish("sorry1.mp4")
-        elif select == 2:
-            speech_pub.publish("That's a bit fucking rude")
-            face_pub.publish("sorry1.mp4")
 
     elif nouns > 1:
         select = randrange(3)
@@ -79,21 +75,29 @@ def incoming_command_callback(data):
         sleeping = True
 
     else:
+        if 'that' in words:
+            location = base_movement.get_location(most_recent_pose)
+            base_movement.publish_waypoint(location)
         if 'help' in words or 'nurse' in words:
             speech_pub.publish("Calling the nurse, please wait")
             face_pub.publish("help.mp4")
         elif 'book' in words:
             speech_pub.publish("Sure, I'll get you a book")
             face_pub.publish("book.mp4")
+            item_loc = base_movement.get_item_location('book')
+            base_movement.publish_waypoint(item_loc)
         elif "thank" in words:
             speech_pub.publish("You're welcome!")
             face_pub.publish("sorry1.mp4")
         elif 'bottle'  in words or 'thirsty'  in words or 'water' in words:
             speech_pub.publish("Okay, I'll grab some water")
+            #key = 'bottle'
             face_pub.publish("water.mp4")
         elif 'bear' in words or 'teddy' in words:
             speech_pub.publish("One teddy bear coming right up")
             face_pub.publish("bear.mp4")
+            item_loc = base_movement.get_item_location('teddy')
+            base_movement.publish_waypoint(item_loc)
         elif 'hello' in words:
             speech_pub.publish("Hello There! I hope you're well")
             face_pub.publish("hello.mp4")
@@ -108,15 +112,15 @@ def incoming_command_callback(data):
             elif select == 2:
                 speech_pub.publish("I couldn't quite catch that")
                 face_pub.publish("sorry1.mp4")
-
+        
 
     rospy.sleep(0.1)
 
     # Waits for the speech to respond
     #location = db_function(data.data)
     # # Going to have to create a while loop to make sure we're waiting for each value to finish
-    location = (-1.7,-0.66,0.9,0)
-    publish_waypoint(location)
+    #location = (-1.7,-0.66,0.9,0)
+    #publish_waypoint(location)
 
     # if onRoute == False:
     #     # while(onRoute):
@@ -136,48 +140,63 @@ def main():
     #Speech Input
     rospy.Subscriber("noun_number", Int8, noun_callback)
     rospy.Subscriber("nlp_out", String, incoming_command_callback)
+    rospy.Subscriber("pose_estimation",String, update_pose_estimate_callback)
     # Create a publisher to be able to send to other nodes
 
+    #wp = base_movement.get_waypoint_location('A') #example get a waypoint
+    #base_movement.publish_waypoint(wp)
+    #item_loc = test.get_item_location('teddy') #example get an item location
+    #test.publish_waypoint(item_loc)
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
 
-def db_function(command):
-    conn = sqlite3.connect('/home/prl1/Documents/EE4-Human-Centered-Robotics/src/main/src/world.db')
-    # Aim of the function is to fetch the correct information
-    c = conn.cursor()
 
-    t = (command,)
-    #use a query like this to extract the target coordinates for an item
-    c.execute('SELECT pos_x,pos_y,pos_theta,height FROM items NATURAL JOIN locations WHERE item_id=?', t)
-    test2 = c.fetchone()
-    item_location = test2 # Get the item information
+class base_movement_manager():
+    def __init__(self):
+        self.conn = sqlite3.connect('/home/prl1/Documents/EE4-Human-Centered-Robotics/src/main/src/world.db')
+        self.c = self.conn.cursor()
+    
+    def get_item_location(self,cmd):
+        t = (cmd,)
+        print "i am going to get item " + cmd 
+        self.c.execute('SELECT location_id FROM items NATURAL JOIN locations WHERE item_id=?', t)
+        print "this is at location " + self.c.fetchone()[0]
+        self.c.execute('SELECT pos_x,pos_y,pos_theta,height FROM items NATURAL JOIN locations WHERE item_id=?', t)
+        item_location = self.c.fetchone() # Get the item information
+        return item_location # return tuple of values
 
-    return item_location # return tuple of values
+    def get_waypoint_location(self,cmd):
+        t = (cmd,)
+        print "I am going to move to location" + cmd
+        self.c.execute('SELECT pos_x,pos_y,pos_theta,height FROM locations WHERE location_id=?', t)
+        item_location = self.c.fetchone() # Get the item information
+        return item_location # return tuple of values 
 
+    def publish_waypoint(self,location_tuple):
+            # stuff here
+        global waypoint_pub
+        pose = PoseStamped()
+        pose.header.seq = 1
+        pose.header.stamp = rospy.Time.now()
+        pose.header.frame_id = "map"
+        pose.pose.position.x = location_tuple[0] # x position
+        pose.pose.position.y = location_tuple[1] # y position
+        pose.pose.position.z = 0
 
-def publish_waypoint(location_tuple):
-        # stuff here
-    global waypoint_pub
-    pose = PoseStamped()
-    pose.header.seq = 1
-    pose.header.stamp = rospy.Time.now()
-    pose.header.frame_id = "map"
-    pose.pose.position.x = location_tuple[0] # x position
-    pose.pose.position.y = location_tuple[1] # y position
-    pose.pose.position.z = 0
+        quaternion = tf.transformations.quaternion_from_euler(0, 0,location_tuple[2]) # angle
+        pose.pose.orientation.x = quaternion[0]
+        pose.pose.orientation.y = quaternion[1]
+        pose.pose.orientation.z = quaternion[2]
+        pose.pose.orientation.w = quaternion[3]
 
-    quaternion = tf.transformations.quaternion_from_euler(0, 0,location_tuple[2]) # angle
-    pose.pose.orientation.x = quaternion[0]
-    pose.pose.orientation.y = quaternion[1]
-    pose.pose.orientation.z = quaternion[2]
-    pose.pose.orientation.w = quaternion[3]
-
-    rospy.loginfo(pose)
-    #rospy.Rate(5).sleep()
-    waypoint_pub.publish(pose)
+        rospy.loginfo(pose)
+        #rospy.Rate(5).sleep()
+        waypoint_pub.publish(pose)
+        rospy.sleep(20)
 
 if __name__ == '__main__':
     rospy.loginfo('Starting the Main Node')
     rospy.sleep(1)
     main()
+

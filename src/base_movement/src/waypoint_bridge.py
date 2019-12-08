@@ -4,6 +4,7 @@ from geometry_msgs.msg import PoseStamped
 import tf 
 
 def publish_waypoint(pose):
+    print "publishing waypoint to ridgeback"
     pub = rospy.Publisher('/move_base_simple/goal',PoseStamped,queue_size=10)
 
     #while not rospy.is_shutdown():
@@ -13,7 +14,9 @@ def publish_waypoint(pose):
 
 def start_waypoint_subscriber():
     rospy.init_node('waypoint_subscriber')
+    print "setting up waypoint topic"
     rospy.Subscriber('/waypoint',PoseStamped,publish_waypoint)
+    print "listening on waypoint topic"
     rospy.spin()
 
 
