@@ -11,7 +11,8 @@ from random import randrange
 speech_pub = rospy.Publisher("speech_out", String, queue_size=10)
 face_pub = rospy.Publisher("file_out", String, queue_size=10)
 waypoint_pub = rospy.Publisher('/waypoint',PoseStamped,queue_size=10)
-
+arm_commander_pub = rospy.Publisher('/arm_commander',String,queue_size=10)
+#pose_estimate_request_pub = rospy.Publisher('/pose_estimate_request',String,queue_size=10)
 
 # Feeling we're going to need flags to make sure there's traciblity of where the robot is
 onRoute = False
@@ -43,7 +44,8 @@ def incoming_command_callback(data):
     global nouns
     global base_movement
     global most_recent_pose
-    
+    global pose
+
     words = data.data.split(" ")
 
 # Check if sleeping
@@ -75,7 +77,7 @@ def incoming_command_callback(data):
         sleeping = True
 
     else:
-        if 'that' in words:
+        if 'that' in words and 'there' in words:
             location = base_movement.get_location(most_recent_pose)
             base_movement.publish_waypoint(location)
         if 'help' in words or 'nurse' in words:
@@ -176,6 +178,7 @@ class base_movement_manager():
     def publish_waypoint(self,location_tuple):
             # stuff here
         global waypoint_pub
+        global arm_commander_pub
         pose = PoseStamped()
         pose.header.seq = 1
         pose.header.stamp = rospy.Time.now()
@@ -193,7 +196,10 @@ class base_movement_manager():
         rospy.loginfo(pose)
         #rospy.Rate(5).sleep()
         waypoint_pub.publish(pose)
-        rospy.sleep(20)
+        #rospy.sleep(20)
+        raw_input()
+        arm_commander_pub('Pick up')
+
 
 if __name__ == '__main__':
     rospy.loginfo('Starting the Main Node')
