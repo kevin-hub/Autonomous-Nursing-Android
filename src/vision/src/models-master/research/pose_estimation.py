@@ -1,5 +1,24 @@
 #!/usr/bin/env python
 # coding: utf-8
+
+# # Detection Objects in a webcam image stream
+
+# <table align="left"><td>
+#   <a target="_blank"  href="https://colab.research.google.com/github/TannerGilbert/Tutorials/blob/master/Tensorflow%20Object%20Detection/detect_object_in_webcam_video.ipynb">
+#     <img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab
+#   </a>
+# </td><td>
+#   <a target="_blank"  href="https://github.com/TannerGilbert/Tutorials/blob/master/Tensorflow%20Object%20Detection/detect_object_in_webcam_video.ipynb">
+#     <img width=32px src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
+# </td></table>
+
+# This notebook is based on the [official Tensorflow Object Detection demo](https://github.com/tensorflow/models/blob/master/research/object_detection/object_detection_tutorial.ipynb) and only contains some slight changes. Make sure to follow the [installation instructions](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md) before you start.
+
+# # Imports
+
+# In[8]:
+
+
 import numpy as np
 import os
 import six.moves.urllib as urllib
@@ -296,10 +315,8 @@ try:
                     x_for_depth = xmin + 0.5*width
                     y_for_depth = ymin + 0.5*height
 
-                    # need to check how to avoid fitting long inside index sized array
                     detectedClass = classNames[output_dict['detection_classes'][0]-1]                      
 
-                    #scale = height/expected
                     scale=1
                     xmin_depth = int((xmin * expected) * scale)
                     ymin_depth = int((ymin * expected) * scale)
@@ -308,33 +325,15 @@ try:
 
                     depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(crop_depth_img, alpha = 0.03), cv2.COLORMAP_JET)
 
-                    # if not dimensionHasNan([xmin_depth, xmax_depth, ymin_depth, ymax_depth]):
-                    #     cv2.rectangle(depth_colormap, (int(xmin_depth), int(ymin_depth)),
-                    #       (int(xmax_depth), int(ymax_depth)), (255, 255, 255), 2)
-                    #     cv2.putText(depth_colormap, detectedClass, (int(xmin_depth), int(ymin_depth)),
-                    #     cv2.FONT_HERSHEY_COMPLEX, 1.0, (255, 255, 255))
-
-                    # find depth value
                     bounding_box_depth_img = np.asanyarray(aligned_depth_frame.get_data())
                     bounding_box_depth_img = bounding_box_depth_img[xmin_depth:xmax_depth, ymin_depth:ymax_depth].astype(float)
         
                     depth_scale = profile.get_device().first_depth_sensor().get_depth_scale()
                     bounding_box_depth_img = bounding_box_depth_img * depth_scale
 
-                    # 3 was a depth correction - take 1st index (not RGB)
                     z = cv2.mean((bounding_box_depth_img)/3)[0]
 
-                    # show detected objects in the live frame (top corners)
-                    # print('  x: %f' %xmin)
-                    # print('  y: %f' %ymin)
-                    # print('  z: %f' %z)
-
-                    # print('  Width: %f' %(width))
-                    # print('  Height: %f' %(height))
-                    
                     if (len(object_buffer) < 10):
-                    #     # store in buffer
-
                         objectIdx = output_dict['detection_classes'][0]-1
 
                         object_buffer.append(DetectedObject(objectIdx, xmin, ymin, z, width, height))
@@ -393,19 +392,9 @@ try:
 
                         confidence_threshold = 0
                         if modal_label == 0:
-                            print('arm_side')
+                            print('RIGHT')
                         elif modal_label == 1:
-                            print('arm_up')
-
-
-                    # ensure that the dimensions can be converted to Int (ie not NaN)
-                    # if not dimensionHasNan([median_x, median_x+median_width, median_y, median_y+median_height]) and confidence>confidence_threshold:
-                        # cv2.rectangle(crop_color_img, (int(median_x*expected), int(median_y*expected)),
-                        # (int((median_x+median_width)*expected), int((median_y+median_height)*expected)), (255, 255, 255), 2)
-                        # cv2.putText(crop_color_img, detectedClass, (int(median_x*expected), int(median_y*expected)),
-                        # cv2.FONT_HERSHEY_COMPLEX, 1.0, (255, 255, 255))
-                        # print('Detected: %s' %detectedClass)
-
+                            print('FRONT')
 
                     images = np.hstack((crop_color_img, depth_colormap))
                     cv2.imshow('Camera streams', images)                
