@@ -82,7 +82,7 @@ key_esc = 27
 key_q = ord('q')
 
 MODEL_NAME = 'inference_graph'
-PATH_TO_FROZEN_GRAPH = '/home/prl4/Documents/EE4-Human-Centered-Robotics/src/vision/src/models-master/research/frozen_inference_graph_teddy.pb'
+PATH_TO_FROZEN_GRAPH = '/home/prl4/Documents/EE4-Human-Centered-Robotics/src/vision/src/models-master/research/frozen_inference_graph.pb'
 PATH_TO_LABELS = '/home/prl4/Documents/EE4-Human-Centered-Robotics/src/vision/src/models-master/research/labelmap_teddy.pbtxt'
 
 detection_graph = tf.Graph()
@@ -208,9 +208,9 @@ class ObjectDetection():
         if object_index == 0: # teddy
             self.confidence_threshold = 50
         elif object_index == 1: #remote
-            self.confidence_threshold = 60
+            self.confidence_threshold = 40
         else: #book
-            self.confidence_threshold = 60
+            self.confidence_threshold = 45
 
         if not self.dimensionHasNan([xmin, xmax, ymin, ymax]) and confidence > confidence_threshold:
             cv2.rectangle(crop_color_img, (int(xmin*expected), int(ymin*expected)),

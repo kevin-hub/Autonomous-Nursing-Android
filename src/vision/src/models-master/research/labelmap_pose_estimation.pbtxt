@@ -1,0 +1,8 @@
+item {
+  id: 1
+  name: "arm_side"
+}
+item {
+  id: 2
+  name: "arm_up"
+}

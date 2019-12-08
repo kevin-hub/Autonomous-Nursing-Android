@@ -60,7 +60,7 @@ from std_msgs.msg import Bool
 from vision.msg import DetectedClass
 
 pub = rospy.Publisher('object_params', DetectedClass, queue_size=10)
-rospy.init_node('talker', anonymous=True)
+rospy.init_node('object_detect', anonymous=True)
 rospy.Subscriber("start_detecting", Bool, callback)
 #rospy.Subscriber("image_topic", Image, image_received)
 rate = rospy.Rate(10)
@@ -111,7 +111,7 @@ from object_detection.utils import visualization_utils as vis_util
 # In[4]:
 
 MODEL_NAME = 'inference_graph'
-PATH_TO_FROZEN_GRAPH = '/home/prl4/Documents/EE4-Human-Centered-Robotics/src/vision/src/models-master/research/frozen_inference_graph_teddy.pb'
+PATH_TO_FROZEN_GRAPH = '/home/prl4/Documents/EE4-Human-Centered-Robotics/src/vision/src/models-master/research/frozen_inference_graph.pb'
 PATH_TO_LABELS = '/home/prl4/Documents/EE4-Human-Centered-Robotics/src/vision/src/models-master/research/labelmap_teddy.pbtxt'
 
 # What model to download.
@@ -178,7 +178,6 @@ def dimensionHasNan(dimensions):
 
 pipeline = rs.pipeline()
 
-# load config.json
 config = rs.config()
 config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
 config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
@@ -409,12 +408,12 @@ try:
                             detect = False
                             #rate.sleep()
 
-                        if modal_label == 0: # bottle
+                        if modal_label == 0: # teddy
                             confidence_threshold = 50
                         elif modal_label == 1: #remote
-                            confidence_threshold = 60
+                            confidence_threshold = 40
                         else: #book
-                            confidence_threshold = 60
+                            confidence_threshold = 45
 
                     # ensure that the dimensions can be converted to Int (ie not NaN)
                     if not dimensionHasNan([median_x, median_x+median_width, median_y, median_y+median_height]) and confidence>confidence_threshold:

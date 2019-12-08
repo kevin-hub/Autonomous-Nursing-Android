@@ -6,3 +6,5 @@ pyyaml
 opencv-python
 google-cloud-speech
 spacy
+tensorflow==1.14
+object-detection
