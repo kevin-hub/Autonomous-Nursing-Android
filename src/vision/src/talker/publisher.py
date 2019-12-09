@@ -7,7 +7,7 @@ from vision.msg import DetectedClass
 
 def talker():    
 
-    pub = rospy.Publisher('custom_chatter', DetectedClass)
+    pub = rospy.Publisher('custom_chatter', String)
     rospy.init_node('talker', anonymous=True)
 
     msg = DetectedClass()
