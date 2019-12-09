@@ -130,41 +130,41 @@ class face:
         self.flag_pub.publish(False)
         self.pause_idle = False
 
-    # Idle face function
-    def idle_video(self):
-        # Dimensions and path
-        height = 600
-        width = 1024
-        video = cv2.VideoCapture(path + "idle" + str(randrange(4) + 1) + ".mp4")
-        # Get frame rate.
-        fps = video.get(cv2.CAP_PROP_FPS)
-        rate = rospy.Rate(fps)
-        # Loop through video frames.
-        while not rospy.is_shutdown() and video.grab():
-            # Break when new video requested
-            if self.pause_idle:
-                return
-            # Grab frame
-            tmp, img = video.retrieve()
-            if not tmp:
-                print "Could not grab frame."
-                break
+    # # Idle face function
+    # def idle_video(self):
+    #     # Dimensions and path
+    #     height = 600
+    #     width = 1024
+    #     video = cv2.VideoCapture(path + "idle" + str(randrange(4) + 1) + ".mp4")
+    #     # Get frame rate.
+    #     fps = video.get(cv2.CAP_PROP_FPS)
+    #     rate = rospy.Rate(fps)
+    #     # Loop through video frames.
+    #     while not rospy.is_shutdown() and video.grab():
+    #         # Break when new video requested
+    #         if self.pause_idle:
+    #             return
+    #         # Grab frame
+    #         tmp, img = video.retrieve()
+    #         if not tmp:
+    #             print "Could not grab frame."
+    #             break
 
-            img_out = np.empty((height, width, img.shape[2]))
-            # Resize image.
-            img_out = cv2.resize(img, (width, height))
-            assert img_out.shape[0:2] == (height, width)
+    #         img_out = np.empty((height, width, img.shape[2]))
+    #         # Resize image.
+    #         img_out = cv2.resize(img, (width, height))
+    #         assert img_out.shape[0:2] == (height, width)
 
-            try:
-                # Publish image.
-                img_msg = bridge.cv2_to_imgmsg(img_out, "bgr8")
-                img_msg.header.stamp = rospy.Time.now()
-                self.img_pub.publish(img_msg)
-            except CvBridgeError as e:
-                print(e)
+    #         try:
+    #             # Publish image.
+    #             img_msg = bridge.cv2_to_imgmsg(img_out, "bgr8")
+    #             img_msg.header.stamp = rospy.Time.now()
+    #             self.img_pub.publish(img_msg)
+    #         except CvBridgeError as e:
+    #             print(e)
 
-            rate.sleep()
-        # Loop idle face
+    #         rate.sleep()
+    #     # Loop idle face
 
     def shutdown(self):
         self.pause_idle = True
@@ -176,9 +176,9 @@ class face:
 if __name__ == '__main__':
     try:
         f = face()
-        while not rospy.is_shutdown():
-            f.idle_video()
-            rospy.sleep(0.1)
+        # while not rospy.is_shutdown():
+        #     f.idle_video()
+        #     rospy.sleep(0.1)
         rospy.spin()
     except rospy.ROSInterruptException:
         pass

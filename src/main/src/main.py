@@ -28,8 +28,6 @@ most_recent_pose = ""
 #The main node will get inputs from Speech and will provide outputs to movements, speech and UI.
 #Vision nodes will be contacted directly from the vision nodes
 
-base_movement = base_movement_manager()
-
 def update_pose_estimate_callback(pose_estimate):
     most_recent_pose = pose_estimate.data
 
@@ -42,7 +40,7 @@ def incoming_command_callback(data):
     global locations
     global sleeping
     global nouns
-    global base_movement
+    base_movement = base_movement_manager()
     global most_recent_pose
     global pose
 
@@ -86,8 +84,8 @@ def incoming_command_callback(data):
         elif 'book' in words:
             speech_pub.publish("Sure, I'll get you a book")
             face_pub.publish("book.mp4")
-            item_loc = base_movement.get_item_location('book')
-            base_movement.publish_waypoint(item_loc)
+            #item_loc = base_movement.get_item_location('book')
+            base_movement.publish_waypoint_from_item('book')
         elif "thank" in words:
             speech_pub.publish("You're welcome!")
             face_pub.publish("sorry1.mp4")
@@ -98,11 +96,11 @@ def incoming_command_callback(data):
         elif 'bear' in words or 'teddy' in words:
             speech_pub.publish("One teddy bear coming right up")
             face_pub.publish("bear.mp4")
-            item_loc = base_movement.get_item_location('teddy')
-            base_movement.publish_waypoint(item_loc)
+            #item_loc = base_movement.get_item_location('teddy')
+            base_movement.publish_waypoint_from_item('teddy')
         elif 'hello' in words:
             speech_pub.publish("Hello There! I hope you're well")
-            face_pub.publish("hello.mp4")
+            face_pub.publish("face.mp4")
         else:
             select = randrange(3)
             if select == 0:
@@ -118,45 +116,10 @@ def incoming_command_callback(data):
 
     rospy.sleep(0.1)
 
-    # Waits for the speech to respond
-    #location = db_function(data.data)
-    # # Going to have to create a while loop to make sure we're waiting for each value to finish
-    #location = (-1.7,-0.66,0.9,0)
-    #publish_waypoint(location)
-
-    # if onRoute == False:
-    #     # while(onRoute):
-    #     #     # Wait for flag to have reached
-    #     #     # Continue with the rest of the tasks
-    # else:
-    #     # Add next destination to the queue
-    #     locations.append(data.data)
-
-
-
-    # speech_pub.publish("I'm on my way!")
-    # height = location[3] - Future extension
-
-def main():
-    rospy.init_node('CentralNode')
-    #Speech Input
-    rospy.Subscriber("noun_number", Int8, noun_callback)
-    rospy.Subscriber("nlp_out", String, incoming_command_callback)
-    rospy.Subscriber("pose_estimation",String, update_pose_estimate_callback)
-    # Create a publisher to be able to send to other nodes
-
-    #wp = base_movement.get_waypoint_location('A') #example get a waypoint
-    #base_movement.publish_waypoint(wp)
-    #item_loc = test.get_item_location('teddy') #example get an item location
-    #test.publish_waypoint(item_loc)
-
-    # spin() simply keeps python from exiting until this node is stopped
-    rospy.spin()
-
 
 class base_movement_manager():
     def __init__(self):
-        self.conn = sqlite3.connect('/home/prl1/Documents/EE4-Human-Centered-Robotics/src/main/src/world.db')
+        self.conn = sqlite3.connect('/home/prl4/Documents/EE4-Human-Centered-Robotics/src/main/src/world.db')
         self.c = self.conn.cursor()
     
     def get_item_location(self,cmd):
@@ -193,12 +156,41 @@ class base_movement_manager():
         pose.pose.orientation.z = quaternion[2]
         pose.pose.orientation.w = quaternion[3]
 
+        print(pose)
         rospy.loginfo(pose)
         #rospy.Rate(5).sleep()
         waypoint_pub.publish(pose)
         #rospy.sleep(20)
-        raw_input()
-        arm_commander_pub('Pick up')
+
+    def publish_waypoint_from_item(self,key):
+        loc = self.get_item_location(key)
+        self.publish_waypoint(loc)
+
+
+def main():
+    rospy.init_node('CentralNode')
+    #Speech Input
+    rospy.Subscriber("noun_number", Int8, noun_callback)
+    rospy.Subscriber("nlp_out", String, incoming_command_callback)
+    rospy.Subscriber("pose_estimation",String, update_pose_estimate_callback)
+    # Create a publisher to be able to send to other nodes
+
+    #wp = base_movement.get_waypoint_location('A') #example get a waypoint
+    #base_movement.publish_waypoint(wp)
+    #item_loc = test.get_item_location('teddy') #example get an item location
+    #test.publish_waypoint(item_loc)
+    print('HERE WE GO!')
+    # spin() simply keeps python from exiting until this node is stopped
+    cmd = ''
+
+    # Start a loop that will run until the user enters 'quit'.
+    while cmd != 'quit':
+        # Ask the user for a name.
+        cmd = raw_input("Action: ")
+        arm_commander_pub.publish(cmd)
+
+    print('Jokes m9')
+    rospy.spin()
 
 
 if __name__ == '__main__':
