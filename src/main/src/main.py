@@ -60,7 +60,7 @@ def incoming_command_callback(data):
         else:
             return
 
-    elif nouns > 1:
+    if nouns > 1:
         select = randrange(3)
         if select == 0:
             speech_pub.publish("Okay, I'll get all those things")

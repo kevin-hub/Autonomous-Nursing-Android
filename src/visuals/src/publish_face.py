@@ -27,14 +27,12 @@ class face:
     def __init__(self):
         # Set up node and publishers.
         rospy.init_node("VideoPublisher")
-        rospy.on_shutdown(self.shutdown)
         self.img_pub = rospy.Publisher("robot/xdisplay", Image, queue_size=10)
         self.flag_pub = rospy.Publisher("face_ready", Bool, queue_size=10)
         self.video_file = '.mp4'
         # Flags
         self.flag_received = False
         self.pause_idle = False
-        self.shutdown = False
         # ROS subscribers
         rospy.Subscriber("speech_ready", Bool, self.flag_callback)
         rospy.Subscriber("file_out", String, self.face_callback)
@@ -115,7 +113,7 @@ class face:
     # Idle face function
     def idle_video(self):
         # Loop idle face
-        while not self.shutdown:
+        while not rospy.is_shutdown():
             # Dimensions and path
             height = 600
             width = 1024
@@ -150,9 +148,6 @@ class face:
                 rate.sleep()
             while self.pause_idle:
                 rospy.sleep(0.01)
-
-    def shutdown(self):
-        self.shutdown = True
 
 
 # End of face class
