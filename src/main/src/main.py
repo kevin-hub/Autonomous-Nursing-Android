@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import rospy
+import rospkg
 import sys
 from std_msgs.msg import String
 from std_msgs.msg import Int8
@@ -24,13 +25,17 @@ sleeping = False
 nouns = 0
 most_recent_pose = ""
 
+rospack = rospkg.RosPack()
+main_path = rospack.get_path('main')
+
 #The main node of the system, responsible for the connecting all the nodes accordingly to create a control flow through the system.
 #The main node will get inputs from Speech and will provide outputs to movements, speech and UI.
 #Vision nodes will be contacted directly from the vision nodes
 
-base_movement = base_movement_manager()
+base_movement = None
 
 def update_pose_estimate_callback(pose_estimate):
+    global most_recent_pose
     most_recent_pose = pose_estimate.data
 
 def noun_callback(data):
@@ -114,7 +119,7 @@ def incoming_command_callback(data):
             elif select == 2:
                 speech_pub.publish("I couldn't quite catch that")
                 face_pub.publish("sorry1.mp4")
-        
+
 
     rospy.sleep(0.1)
 
@@ -156,12 +161,12 @@ def main():
 
 class base_movement_manager():
     def __init__(self):
-        self.conn = sqlite3.connect('/home/prl1/Documents/EE4-Human-Centered-Robotics/src/main/src/world.db')
+        self.conn = sqlite3.connect(main_path + '/src/world.db')
         self.c = self.conn.cursor()
-    
+
     def get_item_location(self,cmd):
         t = (cmd,)
-        print "i am going to get item " + cmd 
+        print "i am going to get item " + cmd
         self.c.execute('SELECT location_id FROM items NATURAL JOIN locations WHERE item_id=?', t)
         print "this is at location " + self.c.fetchone()[0]
         self.c.execute('SELECT pos_x,pos_y,pos_theta,height FROM items NATURAL JOIN locations WHERE item_id=?', t)
@@ -173,7 +178,7 @@ class base_movement_manager():
         print "I am going to move to location" + cmd
         self.c.execute('SELECT pos_x,pos_y,pos_theta,height FROM locations WHERE location_id=?', t)
         item_location = self.c.fetchone() # Get the item information
-        return item_location # return tuple of values 
+        return item_location # return tuple of values
 
     def publish_waypoint(self,location_tuple):
             # stuff here
@@ -202,7 +207,7 @@ class base_movement_manager():
 
 
 if __name__ == '__main__':
+    base_movement = base_movement_manager()
     rospy.loginfo('Starting the Main Node')
     rospy.sleep(1)
     main()
-
