@@ -307,7 +307,7 @@ try:
                     xmax = output_dict['detection_boxes'][0][3]
                     ymin = output_dict['detection_boxes'][0][0]
                     ymax = output_dict['detection_boxes'][0][2]
-
+                    
                     width = xmax - xmin
                     height = ymax - ymin
 
@@ -323,6 +323,8 @@ try:
                     ymin_depth = int((ymin * expected) * scale)
                     xmax_depth = int((xmax * expected) * scale)
                     ymax_depth = int((ymax * expected) * scale)
+
+                    
 
                     depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(crop_depth_img, alpha = 0.03), cv2.COLORMAP_JET)
 

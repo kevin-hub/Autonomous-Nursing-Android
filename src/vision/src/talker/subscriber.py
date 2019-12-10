@@ -16,7 +16,7 @@ class listener():
         rospy.loginfo("\n Detected Object: %s \n with x, y, z: (%s, %s, %s) \n and width, height: (%s, %s)", classNames[data.object_index], data.x, data.y, data.z, data.width, data.height)
 
 if __name__ == '__main__':
-    rospy.init_node('Controller', anonymous=True)
+    rospy.init_node('object_detection_listener', anonymous=True)
     listen = listener()
     # spin() simply keeps python from 
     rospy.spin()

@@ -29,13 +29,13 @@ class RobotControl:
         ## Left Arm
         self.left_group = moveit_commander.MoveGroupCommander("left_arm")
         self.left_group.set_goal_orientation_tolerance(0.1)
-        self.left_group.set_goal_position_tolerance(0.05)
+        self.left_group.set_goal_position_tolerance(0.02)
         self.left_group.set_max_velocity_scaling_factor(0.5)
         self.left_current_pose = self.left_group.get_current_pose(end_effector_link='left_gripper').pose
         # Right Arm
         self.right_group = moveit_commander.MoveGroupCommander("right_arm")
         self.right_group.set_goal_orientation_tolerance(0.1)
-        self.right_group.set_goal_position_tolerance(0.05)
+        self.right_group.set_goal_position_tolerance(0.02)
         self.right_group.set_max_velocity_scaling_factor(0.5)
         self.right_current_pose = self.right_group.get_current_pose(end_effector_link='right_gripper').pose
         print 'our stuff starts below'
@@ -59,21 +59,34 @@ class RobotControl:
             [0,	0,	0,	1]])
 
 
-    def pick_up(self,position):
+    def pick_up(self, item):
         print 'opening'
         self.right_gripper.open(block=True)
         rospy.sleep(3)
-        print "moving to pick up position"
+
         right_target_pose = geometry_msgs.msg.Pose()
 
-        right_target_pose.position.x = position[0]
-        right_target_pose.position.y = position[1]
-        right_target_pose.position.z = position[2]
+        if item == 'bear':
+            right_target_pose.position.x = 0.627531992154
+            right_target_pose.position.y = -0.301985568095
+            right_target_pose.position.z = -0.118618669885
 
-        right_target_pose.orientation.x = -0.10829815208
-        right_target_pose.orientation.y = 0.993432052162
-        right_target_pose.orientation.z = 0.0337987305702
-        right_target_pose.orientation.w = 0.0148967716675
+
+            right_target_pose.orientation.x = -0.562112597039
+            right_target_pose.orientation.y = 0.817106960376
+            right_target_pose.orientation.z = -0.101709746211
+            right_target_pose.orientation.w = 0.0775936278379
+        else:
+
+            right_target_pose.position.x = 0.690362579013
+            right_target_pose.position.y = -0.144359944892
+            right_target_pose.position.z = 0.00480771451017
+
+
+            right_target_pose.orientation.x = 0.0142839438122
+            right_target_pose.orientation.y = 0.991584291005
+            right_target_pose.orientation.z = -0.00593712398289
+            right_target_pose.orientation.w = 0.128535261074
         self.right_group.set_pose_target(right_target_pose)
         traj = self.right_group.plan()
         if not traj.joint_trajectory.points:
@@ -146,8 +159,8 @@ class RobotControl:
 
     def coordinate_transform(self):
         # #matrix goes here
-        # print(self.current_coord)
-        calc = np.asarray([self.current_coord.x, self.current_coord.y, self.current_coord.z, 1])
+        print(1280*self.current_coord.x, 720*(1-self.current_coord.y))
+        calc = np.asarray([1280*self.current_coord.x, 720*(1-self.current_coord.y), self.current_coord.z, 1])
         print('calc: ', calc)
         output = list(np.dot(self.transformation_matrix, calc))
 
@@ -172,12 +185,19 @@ class RobotControl:
 
 
     def cmd_callback(self,cmd):
-        if cmd.data =='pick':
-            print('pick')
+        if cmd.data =='pick_bear':
+            print('pick_bear')
             self.rest()
             rospy.sleep(4)
-            mapped_coordinate = self.coordinate_transform((1,2,3))
-            self.pick_up(mapped_coordinate)
+            self.pick_up('bear')
+            rospy.sleep(3)
+            self.rest()
+            
+        if cmd.data =='pick_book':
+            print('pick_book')
+            self.rest()
+            rospy.sleep(4)
+            self.pick_up('book')
             rospy.sleep(3)
             self.rest()
 
@@ -206,27 +226,29 @@ class RobotControl:
 
     def update_object_callback(self,coordinate):
         self.current_coord = coordinate
-        print(self.current_coord)
         ## Array processing here to
 
     def run(self):
+        # rospy.Subscriber("object_params",DetectedClass,self.update_object_callback)
         # self.rest()
         # rospy.sleep(5)
-        mapped_coordinate = self.coordinate_transform()
-        self.pick_up(mapped_coordinate)
-        rospy.sleep(5)
         # self.rest()
         # rospy.sleep(5)
         # self.drop_off()
         # rospy.sleep(2)
         # self.right_gripper.open(block=True)
         # self.rest()
-        # rospy.sleep(5)
-        # rospy.Subscriber("object_params",DetectedClass,self.update_object_callback)
+    
         #self.drop_off()
-        # print('Listening')
-        # rospy.Subscriber("arm_commander", String, self.cmd_callback)
-        # rospy.spin()
+        print('Listening')
+        rospy.Subscriber("arm_commander", String, self.cmd_callback)
+        rospy.spin()
+        # rospy.sleep(5)
+        # mapped_coordinate = self.coordinate_transform()
+        # print("MOVING TO THIS VALUE")
+        # print(mapped_coordinate)
+        # self.pick_up(mapped_coordinate)
+        # rospy.sleep(5)
 
         
 

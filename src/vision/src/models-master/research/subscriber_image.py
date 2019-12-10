@@ -48,7 +48,7 @@ def callback(color_msg, depth_msg):
     object_detction(color_frame, depth_frame)
 
 def listener():
-    rospy.init_node('listener', anonymous=True)
+    rospy.init_node('object_detection_listener', anonymous=True)
     
     # Subscribes to chatter topic
     # Type: std_msg.msgs.String

@@ -60,7 +60,7 @@ from std_msgs.msg import Bool
 from vision.msg import DetectedClass
 
 pub = rospy.Publisher('object_params', DetectedClass, queue_size=10)
-rospy.init_node('talker', anonymous=True)
+rospy.init_node('pose_estimation', anonymous=True)
 rospy.Subscriber("start_detecting", Bool, callback)
 #rospy.Subscriber("image_topic", Image, image_received)
 rate = rospy.Rate(10)
