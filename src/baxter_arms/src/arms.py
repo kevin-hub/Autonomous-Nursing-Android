@@ -13,6 +13,10 @@ import tf
 import baxter_interface
 from vision.msg import DetectedClass
 
+import pandas as pd
+import numpy as np 
+
+
 class RobotControl:
     #robot = None
     #group = None
@@ -43,6 +47,16 @@ class RobotControl:
         self.right_gripper.set_moving_force(10.0)
 
         self.current_coord = DetectedClass()
+        self.current_coord.x = 887
+        self.current_coord.y = 395
+        self.current_coord.z = 0.55
+
+
+        self.transformation_matrix = np.asarray(
+            [[8.21E-05,	-0.0006729464,	0.5699639555, 0.3332467225],
+            [-0.0005697659,	4.31E-05,	0.0971212127,	0.4828013787],
+            [-3.24E-06,	-0.0002107239,	-0.965566911,	0.8521097371],
+            [0,	0,	0,	1]])
 
 
     def pick_up(self,position):
@@ -130,19 +144,29 @@ class RobotControl:
         moveit_commander.roscpp_shutdown()
         moveit_commander.os._exit(0)
 
-    def coordinate_transform(self,coordinate):
-        #matrix goes here
+    def coordinate_transform(self):
+        # #matrix goes here
+        # print(self.current_coord)
+        calc = np.asarray([self.current_coord.x, self.current_coord.y, self.current_coord.z, 1])
+        print('calc: ', calc)
+        output = list(np.dot(self.transformation_matrix, calc))
+
+        print('output', output)
+
+        output[0] = output[0]/output[3]
+        output[1] = output[1]/output[3]
+        output[2] = output[2]/output[3]
+
         #TODO compute new x,y,z using generated transformation matrix
-        new_x =  0.680813877739
-        new_y = -0.0274510576237
-        new_z = -0.0568065638977
+        new_x =  output[0]
+        new_y =  output[1]
+        new_z =  output[2]
         return (new_x,new_y,new_z)
 
     def print_state(self):
         print "Right CURRENT POSE "
         print(self.right_group.get_current_pose(end_effector_link='right_gripper').pose)
         
-
         # print "Left CURRENT POSE"
         # print(self.left_group.get_current_pose(end_effector_link='left_gripper').pose)
 
@@ -182,13 +206,15 @@ class RobotControl:
 
     def update_object_callback(self,coordinate):
         self.current_coord = coordinate
+        print(self.current_coord)
+        ## Array processing here to
 
     def run(self):
         # self.rest()
         # rospy.sleep(5)
-        # mapped_coordinate = self.coordinate_transform((1,2,3))
-        # self.pick_up(mapped_coordinate)
-        # rospy.sleep(5)
+        mapped_coordinate = self.coordinate_transform()
+        self.pick_up(mapped_coordinate)
+        rospy.sleep(5)
         # self.rest()
         # rospy.sleep(5)
         # self.drop_off()
@@ -198,9 +224,9 @@ class RobotControl:
         # rospy.sleep(5)
         # rospy.Subscriber("object_params",DetectedClass,self.update_object_callback)
         #self.drop_off()
-        print('Listening')
-        rospy.Subscriber("arm_commander", String, self.cmd_callback)
-        rospy.spin()
+        # print('Listening')
+        # rospy.Subscriber("arm_commander", String, self.cmd_callback)
+        # rospy.spin()
 
         
 
