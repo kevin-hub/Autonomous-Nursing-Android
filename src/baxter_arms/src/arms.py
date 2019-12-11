@@ -199,15 +199,15 @@ class RobotControl:
             rospy.sleep(3)
             self.rest()
 
-        elif self.current_coord.object_index =='rest':
-            self.rest()
-        elif self.current_coord.object_index == 'exit':
-            self.exit()
-        elif self.current_coord.object_index == 'state':
-            self.print_state()
-        elif self.current_coord.object_index == 'close':
-            self.right_gripper.close(block=True)
-            rospy.sleep(2)
+        # elif self.current_coord.object_index =='rest':
+        #     self.rest()
+        # elif self.current_coord.object_index == 'exit':
+        #     self.exit()
+        # elif self.current_coord.object_index == 'state':
+        #     self.print_state()
+        # elif self.current_coord.object_index == 'close':
+        #     self.right_gripper.close(block=True)
+        #     rospy.sleep(2)
 
         else:
             # Didn't understand
