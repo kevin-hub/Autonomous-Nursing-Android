@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import rospy
 from geometry_msgs.msg import PoseStamped
-import tf 
+import tf
 
-def publish_waypoint(x,y,theta):
+def publish_waypoint(location_tuple):
     rospy.init_node('wp_publisher')
 
 
@@ -11,15 +11,15 @@ def publish_waypoint(x,y,theta):
     pose.header.seq = 1
     pose.header.stamp = rospy.Time.now()
     pose.header.frame_id = "map"
-    pose.pose.position.x = 3.52314562365
-    pose.pose.position.y = 3.72042830714
+    pose.pose.position.x = location_tuple[0]
+    pose.pose.position.y = location_tuple[1]
     pose.pose.position.z = 0
 
     quaternion = tf.transformations.quaternion_from_euler(0, 0, theta)
     pose.pose.orientation.x = 0#quaternion[0]
     pose.pose.orientation.y = 0#quaternion[1]
-    pose.pose.orientation.z = 0.780326618642#quaternion[2]
-    pose.pose.orientation.w = 0.625372183775 #quaternion[3]
+    pose.pose.orientation.z = location_tuple[3]#quaternion[2]
+    pose.pose.orientation.w = location_tuple[4] #quaternion[3]
 
     pub = rospy.Publisher('/waypoint',PoseStamped,queue_size=10)
 
@@ -29,17 +29,45 @@ def publish_waypoint(x,y,theta):
     pub.publish(pose)
 
 
+
+
+
 if __name__=='__main__':
     try:
-        x = 6.29352000778#book
-        y = 3.5092050533#book
-        theta = 0
-        publish_waypoint(x,y,theta)
-        
+        # define location tuples in form # (x_pos,y_pos, z_ori,w_ori)
+        start_pos = (3.98385245187,2.35139133361,0.750390288536,0.660995018794)
+        patient_pos = (3.52314562365,3.72042830714,0.780326618642,0.625372183775)
+        front_pos = (5.31591619403,4.37975566763,0.774795335762,0.632212138195)
+        bear_pos = front_pos
+        right_pos = (6.29352000778,3.5092050533,-0.589169881958,0.808009189424)
+        book_pos = right_pos
+
+        while True:
+            key = raw_input('Location?: ')
+            if key =='1':
+                print("moving to the starting location")
+                publish_waypoint(start_pos)
+                rospy.sleep(30)
+            elif key == '2':
+                print("moving to the bedside")
+                publish_waypoint(patient_pos)
+                rospy.sleep(30)
+            elif key == '3':
+                print("moving to the position of the bear")
+                publish_waypoint(bear_pos)
+                rospy.sleep(30)
+            elif key =='4':
+                print("moving to the position of the book")
+                publish_waypoint(book_pos)
+                rospy.sleep(30)
+            elif key =='5':
+                print("moving to the desk to front")
+                publish_waypoint(front_pos)
+                rospy.sleep(30)
+            elif key =='6':
+                print("moving to the desk to right")
+                publish_waypoint(right_pos)
+                rospy.sleep(30)
+
     except rospy.ROSInterruptException:
         pass
-
-
-
-
-
