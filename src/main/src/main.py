@@ -12,7 +12,7 @@ from random import randrange
 speech_pub = rospy.Publisher("speech_out", String, queue_size=10)
 face_pub = rospy.Publisher("file_out", String, queue_size=10)
 emotions = rospy.Publisher("facial_expression_command", String, queue_size=10)
-# waypoint_pub = rospy.Publisher('/waypoint',PoseStamped,queue_size=10)
+waypoint_pub = rospy.Publisher('/waypoint',PoseStamped,queue_size=10)
 arm_commander_pub = rospy.Publisher('/arm_commander',String,queue_size=10)
 #pose_estimate_request_pub = rospy.Publisher('/pose_estimate_request',String,queue_size=10)
 
@@ -92,37 +92,40 @@ def incoming_command_callback(data):
         emotions.publish("sleeping")
         awake = False
 
-    elif 'that' in words and 'there' in words:
-        location = base_movement.get_location(most_recent_pose)
-        # base_movement.publish_waypoint(location)
-    elif 'help' in words or 'nurse' in words:
-        speech_pub.publish("Calling the nurse, please wait")
-        # face_pub.publish("help.mp4")
-        emotions.publish("happiness")
-    elif 'book' in words:
-        speech_pub.publish("Sure, I'll get you a book")
-        # face_pub.publish("book.mp4")
-        #item_loc = base_movement.get_item_location('book')
-        emotions.publish("happiness")
-        # base_movement.publish_waypoint_from_item('book')
+    # elif 'that' in words and 'there' in words:
+    #     location = base_movement.get_location(most_recent_pose)
+    #     # base_movement.publish_waypoint(location)
+    # elif 'help' in words or 'nurse' in words:
+    #     speech_pub.publish("Calling the nurse, please wait")
+    #     # face_pub.publish("help.mp4")
+    #     emotions.publish("happiness")
+    # elif 'book' in words:
+    #     speech_pub.publish("Sure, I'll get you a book")
+    #     # face_pub.publish("book.mp4")
+    #     #item_loc = base_movement.get_item_location('book')
+    #     emotions.publish("happiness")
+    #    
     elif "thank" in words:
         speech_pub.publish("You're welcome!")
         # face_pub.publish("sorry1.mp4")
-        emotions.publish("approval")
+        # emotions.publish("approval")
     elif 'remote' in words or 'TV' in words:
         speech_pub.publish("Okay, I'll grab the remote")
+        print('Grabbing Remote')
         #key = 'bottle'
         # face_pub.publish("water.mp4")
-        emotions.publish("happiness")
+        # emotions.publish("happiness")
+        base_movement.publish_waypoint_from_item('remote')
     elif 'bear' in words or 'teddy' in words:
         speech_pub.publish("One teddy bear coming right up")
+        print('Grabbing Teddy')
         # face_pub.publish("bear.mp4")
-        #item_loc = base_movement.get_item_location('teddy')
-        emotions.publish("happiness")
-        # base_movement.publish_waypoint_from_item('teddy')
+        # emotions.publish("happiness")
+        base_movement.publish_waypoint_from_item('teddy')
     elif 'hello' in words or 'hey' in words:
         speech_pub.publish("Hello There! I hope you're well")
-        emotions.publish("approval")
+        print('Hello There')
+        # emotions.publish("approval")
         # face_pub.publish("face.mp4")
     else:
         select = randrange(3)
@@ -148,14 +151,14 @@ class base_movement_manager():
         print "i am going to get item " + cmd
         self.c.execute('SELECT location_id FROM items NATURAL JOIN locations WHERE item_id=?', t)
         print "this is at location " + self.c.fetchone()[0]
-        self.c.execute('SELECT pos_x,pos_y,pos_theta,height FROM items NATURAL JOIN locations WHERE item_id=?', t)
+        self.c.execute('SELECT pos_x,pos_y,z_ori,w_ori FROM items NATURAL JOIN locations WHERE item_id=?', t)
         item_location = self.c.fetchone() # Get the item information
         return item_location # return tuple of values
 
     def get_waypoint_location(self,cmd):
         t = (cmd,)
         print "I am going to move to location" + cmd
-        self.c.execute('SELECT pos_x,pos_y,pos_theta,height FROM locations WHERE location_id=?', t)
+        self.c.execute('SELECT pos_x,pos_y,z_ori, w_ori FROM locations WHERE location_id=?', t)
         item_location = self.c.fetchone() # Get the item information
         return item_location # return tuple of values
 
@@ -171,20 +174,27 @@ class base_movement_manager():
         pose.pose.position.y = location_tuple[1] # y position
         pose.pose.position.z = 0
 
-        quaternion = tf.transformations.quaternion_from_euler(0, 0,location_tuple[2]) # angle
-        pose.pose.orientation.x = quaternion[0]
-        pose.pose.orientation.y = quaternion[1]
-        pose.pose.orientation.z = quaternion[2]
-        pose.pose.orientation.w = quaternion[3]
+        pose.pose.orientation.x = 0
+        pose.pose.orientation.y = 0
+        pose.pose.orientation.z = location_tuple[2]
+        pose.pose.orientation.w = location_tuple[3]
 
-        # rospy.loginfo(pose)
+        rospy.loginfo(pose)
         #rospy.Rate(5).sleep()
         waypoint_pub.publish(pose)
-        #rospy.sleep(20)
 
     def publish_waypoint_from_item(self,key):
         loc = self.get_item_location(key)
+        print('Grabbing item: ', key)
+        print('Location: ', loc)
         self.publish_waypoint(loc)
+
+        raw_input('GOING TO THE ' + key)
+
+        loc = self.get_waypoint_location('HOME')
+        self.publish_waypoint(loc)
+
+        raw_input('GOING TO THE HOME')
 
 
 def main():
@@ -200,16 +210,16 @@ def main():
     #item_loc = test.get_item_location('teddy') #example get an item location
     #test.publish_waypoint(item_loc)
     print('HERE WE GO!')
-    # spin() simply keeps python from exiting until this node is stopped
-    cmd = ''
+    # # spin() simply keeps python from exiting until this node is stopped
+    # cmd = ''
 
-    # Start a loop that will run until the user enters 'quit'.
-    while cmd != 'quit':
-        # Ask the user for a name.
-        cmd = raw_input("Action: ")
-        arm_commander_pub.publish(cmd)
+    # # Start a loop that will run until the user enters 'quit'.
+    # while cmd != 'quit':
+    #     # Ask the user for a name.
+    #     cmd = raw_input("Action: ")
+    #     arm_commander_pub.publish(cmd)
 
-    print('Jokes m9')
+    # print('Jokes m9')
     rospy.spin()
 
 
