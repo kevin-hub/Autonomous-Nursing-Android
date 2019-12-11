@@ -78,15 +78,14 @@ class RobotControl:
             right_target_pose.orientation.w = 0.0775936278379
         else:
 
-            right_target_pose.position.x = 0.690362579013
-            right_target_pose.position.y = -0.144359944892
-            right_target_pose.position.z = 0.00480771451017
+            right_target_pose.position.x =  0.700833406129
+            right_target_pose.position.y = 0.0556458176873
+            right_target_pose.position.z = -0.0404490780563
 
-
-            right_target_pose.orientation.x = 0.0142839438122
-            right_target_pose.orientation.y = 0.991584291005
-            right_target_pose.orientation.z = -0.00593712398289
-            right_target_pose.orientation.w = 0.128535261074
+            right_target_pose.orientation.x = -0.00136236940212
+            right_target_pose.orientation.y = 0.994179833903
+            right_target_pose.orientation.z = 0.0818669626783
+            right_target_pose.orientation.w = 0.0700171567036
         self.right_group.set_pose_target(right_target_pose)
         traj = self.right_group.plan()
         if not traj.joint_trajectory.points:
@@ -193,8 +192,8 @@ class RobotControl:
             rospy.sleep(3)
             self.rest()
             
-        if cmd.data =='pick_book':
-            print('pick_book')
+        if cmd.data =='pick_r':
+            print('pick_r')
             self.rest()
             rospy.sleep(4)
             self.pick_up('book')

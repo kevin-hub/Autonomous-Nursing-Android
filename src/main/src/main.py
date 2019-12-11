@@ -12,7 +12,7 @@ from random import randrange
 speech_pub = rospy.Publisher("speech_out", String, queue_size=10)
 face_pub = rospy.Publisher("file_out", String, queue_size=10)
 emotions = rospy.Publisher("facial_expression_command", String, queue_size=10)
-waypoint_pub = rospy.Publisher('/waypoint',PoseStamped,queue_size=10)
+# waypoint_pub = rospy.Publisher('/waypoint',PoseStamped,queue_size=10)
 arm_commander_pub = rospy.Publisher('/arm_commander',String,queue_size=10)
 #pose_estimate_request_pub = rospy.Publisher('/pose_estimate_request',String,queue_size=10)
 
@@ -53,6 +53,8 @@ def incoming_command_callback(data):
 
     words = data.data.split(" ")
 
+    print(words)
+
 # Check if awake
     # if "anna" in words or "ayana" in words:
     #     awake = True
@@ -64,22 +66,22 @@ def incoming_command_callback(data):
     
     # if awake == True:
 
-    if nouns > 1:
-        select = randrange(3)
-        if select == 0:
-            speech_pub.publish("Okay, I'll get all those things")
-            # face_pub.publish("many1.mp4")
-            emotions.publish("approval")
-        elif select == 1:
-            speech_pub.publish("That's a lot of stuff you want")
-            # face_pub.publish("many2.mp4")
-            emotions.publish("idle")
-        elif select == 2:
-            speech_pub.publish("I'll be one minute")
-            # face_pub.publish("many3.mp4")
-            emotions.publish("approval")
+    # if nouns > 1:
+    #     select = randrange(3)
+    #     if select == 0:
+    #         speech_pub.publish("Okay, I'll get all those things")
+    #         # face_pub.publish("many1.mp4")
+    #         emotions.publish("approval")
+    #     elif select == 1:
+    #         speech_pub.publish("That's a lot of stuff you want")
+    #         # face_pub.publish("many2.mp4")
+    #         emotions.publish("idle")
+    #     elif select == 2:
+    #         speech_pub.publish("I'll be one minute")
+    #         # face_pub.publish("many3.mp4")
+    #         emotions.publish("approval")
 
-    elif "name" in words and "what" in words:
+    if "name" in words and "what" in words:
         speech_pub.publish("My name is Anna")
         # face_pub.publish("sorry1.mp4")
         emotions.publish("approval")
@@ -90,52 +92,50 @@ def incoming_command_callback(data):
         emotions.publish("sleeping")
         awake = False
 
+    elif 'that' in words and 'there' in words:
+        location = base_movement.get_location(most_recent_pose)
+        # base_movement.publish_waypoint(location)
+    elif 'help' in words or 'nurse' in words:
+        speech_pub.publish("Calling the nurse, please wait")
+        # face_pub.publish("help.mp4")
+        emotions.publish("happiness")
+    elif 'book' in words:
+        speech_pub.publish("Sure, I'll get you a book")
+        # face_pub.publish("book.mp4")
+        #item_loc = base_movement.get_item_location('book')
+        emotions.publish("happiness")
+        # base_movement.publish_waypoint_from_item('book')
+    elif "thank" in words:
+        speech_pub.publish("You're welcome!")
+        # face_pub.publish("sorry1.mp4")
+        emotions.publish("approval")
+    elif 'remote' in words or 'TV' in words:
+        speech_pub.publish("Okay, I'll grab the remote")
+        #key = 'bottle'
+        # face_pub.publish("water.mp4")
+        emotions.publish("happiness")
+    elif 'bear' in words or 'teddy' in words:
+        speech_pub.publish("One teddy bear coming right up")
+        # face_pub.publish("bear.mp4")
+        #item_loc = base_movement.get_item_location('teddy')
+        emotions.publish("happiness")
+        # base_movement.publish_waypoint_from_item('teddy')
+    elif 'hello' in words or 'hey' in words:
+        speech_pub.publish("Hello There! I hope you're well")
+        emotions.publish("approval")
+        # face_pub.publish("face.mp4")
     else:
-        if 'that' in words and 'there' in words:
-            location = base_movement.get_location(most_recent_pose)
-            base_movement.publish_waypoint(location)
-        if 'help' in words or 'nurse' in words:
-            speech_pub.publish("Calling the nurse, please wait")
-            # face_pub.publish("help.mp4")
-            emotions.publish("happiness")
-        elif 'book' in words:
-            speech_pub.publish("Sure, I'll get you a book")
-            # face_pub.publish("book.mp4")
-            #item_loc = base_movement.get_item_location('book')
-            emotions.publish("happiness")
-            base_movement.publish_waypoint_from_item('book')
-        elif "thank" in words:
-            speech_pub.publish("You're welcome!")
-            # face_pub.publish("sorry1.mp4")
-            emotions.publish("approval")
-        elif 'remote'  in words or 'TV'  in words:
-            speech_pub.publish("Okay, I'll grab the remote")
-            #key = 'bottle'
-            # face_pub.publish("water.mp4")
-            emotions.publish("happiness")
-        elif 'bear' in words or 'teddy' in words:
-            speech_pub.publish("One teddy bear coming right up")
-            # face_pub.publish("bear.mp4")
-            #item_loc = base_movement.get_item_location('teddy')
-            emotions.publish("happiness")
-            base_movement.publish_waypoint_from_item('teddy')
-        elif 'hello' in words:
-            speech_pub.publish("Hello There! I hope you're well")
-            emotions.publish("approval")
-            # face_pub.publish("face.mp4")
-        else:
-            select = randrange(3)
-            if select == 0:
-                speech_pub.publish("Sorry, I didn't understand that")
-            elif select == 1:
-                speech_pub.publish("What was that?")
-            elif select == 2:
-                speech_pub.publish("I couldn't quite catch that")
-            emotions.publish("confusion")
-        
+        select = randrange(3)
+        if select == 0:
+            speech_pub.publish("Sorry, I didn't understand that")
+        elif select == 1:
+            speech_pub.publish("What was that?")
+        elif select == 2:
+            speech_pub.publish("I couldn't quite catch that")
+        emotions.publish("confusion")
 
 
-    rospy.sleep(0.1)
+    rospy.sleep(0.5)
 
 
 class base_movement_manager():
@@ -177,8 +177,7 @@ class base_movement_manager():
         pose.pose.orientation.z = quaternion[2]
         pose.pose.orientation.w = quaternion[3]
 
-        print(pose)
-        rospy.loginfo(pose)
+        # rospy.loginfo(pose)
         #rospy.Rate(5).sleep()
         waypoint_pub.publish(pose)
         #rospy.sleep(20)

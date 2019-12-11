@@ -25,10 +25,12 @@ class speech_processor:
                  "What".decode('utf-8'),
                  "Name".decode('utf-8'),
                  "Nurse".decode('utf-8'),
-                 "Fuck".decode('utf-8'),
+                 "Remote".decode('utf-8'),
+                 "TV".decode('utf-8'),
                  "Thank".decode('utf-8'),
                  "Anna".decode('utf-8'),
                  "Be".decode('utf-8'),
+                 "Hey".decode('utf-8'),
                  "Quiet".decode('utf-8')]
         self.patterns = [self.nlp.make_doc(text) for text in self.terms]
         self.matcher.add("TerminologyList".decode('utf-8'), None, *self.patterns)
@@ -60,8 +62,8 @@ class speech_processor:
             # We can publish this response to the next nodes
             span_str.append(str(span).lower())
 
-        self.noun_pub.publish(nouns)
-        rospy.sleep(0.1)
+        # self.noun_pub.publish(nouns)
+        # rospy.sleep(0.1)
 
         if len(span_str) == 0:
             self.speech_pub.publish("sorry")
