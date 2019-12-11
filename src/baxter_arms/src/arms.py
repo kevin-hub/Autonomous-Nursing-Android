@@ -12,7 +12,6 @@ from std_msgs.msg import String
 import tf
 import baxter_interface
 from vision.msg import DetectedClass
-
 import pandas as pd
 import numpy as np 
 
@@ -47,10 +46,6 @@ class RobotControl:
         self.right_gripper.set_moving_force(10.0)
 
         self.current_coord = DetectedClass()
-        self.current_coord.x = 887
-        self.current_coord.y = 395
-        self.current_coord.z = 0.55
-
 
         self.transformation_matrix = np.asarray(
             [[8.21E-05,	-0.0006729464,	0.5699639555, 0.3332467225],
@@ -86,12 +81,15 @@ class RobotControl:
             right_target_pose.orientation.y = 0.994179833903
             right_target_pose.orientation.z = 0.0818669626783
             right_target_pose.orientation.w = 0.0700171567036
+
         self.right_group.set_pose_target(right_target_pose)
         traj = self.right_group.plan()
+
         if not traj.joint_trajectory.points:
             print "[ERROR] No trajectory found"
         else:
             self.right_group.go(wait=True)
+
         rospy.sleep(3)
         print 'closing'
         self.right_gripper.close(block=True)
@@ -183,8 +181,9 @@ class RobotControl:
         # print(self.left_group.get_current_pose(end_effector_link='left_gripper').pose)
 
 
-    def cmd_callback(self,cmd):
-        if cmd.data =='pick_bear':
+    def cmd_callback(self):
+        ## Update the values here
+        if self.current_coord.object_index =='teddy':
             print('pick_bear')
             self.rest()
             rospy.sleep(4)
@@ -192,28 +191,21 @@ class RobotControl:
             rospy.sleep(3)
             self.rest()
             
-        if cmd.data =='pick_r':
-            print('pick_r')
+        if self.current_coord.object_index =='remote':
+            print('pick_remote')
             self.rest()
             rospy.sleep(4)
-            self.pick_up('book')
+            self.pick_up('remote')
             rospy.sleep(3)
             self.rest()
 
-        elif cmd.data =='give':
-            print('give')
-            self.drop_off()
-            rospy.sleep(2)
-            self.right_gripper.open(block=True)
+        elif self.current_coord.object_index =='rest':
             self.rest()
-
-        elif cmd.data =='rest':
-            self.rest()
-        elif cmd.data == 'exit':
+        elif self.current_coord.object_index == 'exit':
             self.exit()
-        elif cmd.data == 'state':
+        elif self.current_coord.object_index == 'state':
             self.print_state()
-        elif cmd.data == 'close':
+        elif self.current_coord.object_index == 'close':
             self.right_gripper.close(block=True)
             rospy.sleep(2)
 
@@ -223,12 +215,22 @@ class RobotControl:
             pass
 
 
-    def update_object_callback(self,coordinate):
-        self.current_coord = coordinate
+    def update_object_callback(self,object_vision):
+        self.current_coord = object_vision
         ## Array processing here to
 
+    def give(self):
+        print('give')
+        self.drop_off()
+        rospy.sleep(2)
+        self.right_gripper.open(block=True)
+        rospy.sleep(3)
+        self.rest()
+
     def run(self):
-        # rospy.Subscriber("object_params",DetectedClass,self.update_object_callback)
+
+        rospy.Subscriber("object_params", DetectedClass, self.update_object_callback)
+        # rospy.Subscriber("arm_commander", String, self.cmd_callback)
         # self.rest()
         # rospy.sleep(5)
         # self.rest()
@@ -238,18 +240,21 @@ class RobotControl:
         # self.right_gripper.open(block=True)
         # self.rest()
     
-        #self.drop_off()
+        # self.drop_off()
         print('Listening')
-        rospy.Subscriber("arm_commander", String, self.cmd_callback)
-        rospy.spin()
+        raw_input("Go pickup: ")
+        
+        self.cmd_callback()
+
+        raw_input("Go dropoff: ")
+
+        self.give()
         # rospy.sleep(5)
         # mapped_coordinate = self.coordinate_transform()
         # print("MOVING TO THIS VALUE")
         # print(mapped_coordinate)
         # self.pick_up(mapped_coordinate)
         # rospy.sleep(5)
-
-        
 
 
 if __name__ == '__main__':
