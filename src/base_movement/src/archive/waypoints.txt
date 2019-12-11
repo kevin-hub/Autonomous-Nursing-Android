@@ -1,0 +1,85 @@
+book
+
+header: 
+  seq: 57
+  stamp: 
+    secs: 1576061420
+    nsecs: 532621719
+  frame_id: "map"
+pose: 
+  pose: 
+    position: 
+      x: 6.29352000778
+      y: 3.5092050533
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.589169881958
+      w: 0.808009189424
+
+
+
+bear
+
+header: 
+  seq: 47
+  stamp: 
+    secs: 1576062041
+    nsecs: 151818353
+  frame_id: "map"
+pose: 
+  pose: 
+    position: 
+      x: 5.31591619403
+      y: 4.37975566763
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.774795335762
+      w: 0.632212138195
+
+start
+
+header: 
+  seq: 17
+  stamp: 
+    secs: 1576061934
+    nsecs: 670646276
+  frame_id: "map"
+pose: 
+  pose: 
+    position: 
+      x: 3.98385245187
+      y: 2.35139133361
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.750390288536
+      w: 0.660995018794
+
+
+patient
+
+header: 
+  seq: 75
+  stamp: 
+    secs: 1576063636
+    nsecs: 428633002
+  frame_id: "map"
+pose: 
+  pose: 
+    position: 
+      x: 3.52314562365
+      y: 3.72042830714
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.780326618642
+      w: 0.625372183775
+
+
+

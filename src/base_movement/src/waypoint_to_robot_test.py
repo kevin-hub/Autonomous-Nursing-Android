@@ -11,15 +11,15 @@ def publish_waypoint(x,y,theta):
     pose.header.seq = 1
     pose.header.stamp = rospy.Time.now()
     pose.header.frame_id = "map"
-    pose.pose.position.x = x
-    pose.pose.position.y = y
+    pose.pose.position.x = 3.52314562365
+    pose.pose.position.y = 3.72042830714
     pose.pose.position.z = 0
 
     quaternion = tf.transformations.quaternion_from_euler(0, 0, theta)
-    pose.pose.orientation.x = quaternion[0]
-    pose.pose.orientation.y = quaternion[1]
-    pose.pose.orientation.z = quaternion[2]
-    pose.pose.orientation.w = quaternion[3]
+    pose.pose.orientation.x = 0#quaternion[0]
+    pose.pose.orientation.y = 0#quaternion[1]
+    pose.pose.orientation.z = 0.780326618642#quaternion[2]
+    pose.pose.orientation.w = 0.625372183775 #quaternion[3]
 
     pub = rospy.Publisher('/waypoint',PoseStamped,queue_size=10)
 
@@ -31,8 +31,8 @@ def publish_waypoint(x,y,theta):
 
 if __name__=='__main__':
     try:
-        x = -2.1
-        y = -1.1
+        x = 6.29352000778#book
+        y = 3.5092050533#book
         theta = 0
         publish_waypoint(x,y,theta)
         
