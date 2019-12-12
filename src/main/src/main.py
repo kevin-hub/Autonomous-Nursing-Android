@@ -10,10 +10,10 @@ import tf
 from random import randrange
 
 speech_pub = rospy.Publisher("speech_out", String, queue_size=10)
-face_pub = rospy.Publisher("file_out", String, queue_size=10)
-emotions = rospy.Publisher("facial_expression_command", String, queue_size=10)
+# face_pub = rospy.Publisher("file_out", String, queue_size=10)
+# emotions = rospy.Publisher("facial_expression_command", String, queue_size=10)
 waypoint_pub = rospy.Publisher('/waypoint',PoseStamped,queue_size=10)
-arm_commander_pub = rospy.Publisher('/arm_commander',String,queue_size=10)
+# arm_commander_pub = rospy.Publisher('/arm_commander',String,queue_size=10)
 #pose_estimate_request_pub = rospy.Publisher('/pose_estimate_request',String,queue_size=10)
 
 # Feeling we're going to need flags to make sure there's traciblity of where the robot is
@@ -107,8 +107,7 @@ def incoming_command_callback(data):
     #    
     elif "thank" in words:
         speech_pub.publish("You're welcome!")
-        # face_pub.publish("sorry1.mp4")
-        # emotions.publish("approval")
+
     elif 'remote' in words or 'TV' in words:
         speech_pub.publish("Okay, I'll grab the remote")
         print('Grabbing Remote')

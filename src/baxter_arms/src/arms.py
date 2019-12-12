@@ -15,6 +15,7 @@ from vision.msg import DetectedClass
 import pandas as pd
 import numpy as np 
 
+emotions = rospy.Publisher("facial_expression_command", String, queue_size=10)
 
 class RobotControl:
     #robot = None
@@ -242,19 +243,16 @@ class RobotControl:
     
         # self.drop_off()
         print('Listening')
+        emotions.publish("happiness")
         raw_input("Go pickup: ")
-        
+        emotions.publish("confusion")
         self.cmd_callback()
-
+        emotions.publish("happiness")
         raw_input("Go dropoff: ")
-
+        emotions.publish("happiness")
         self.give()
-        # rospy.sleep(5)
-        # mapped_coordinate = self.coordinate_transform()
-        # print("MOVING TO THIS VALUE")
-        # print(mapped_coordinate)
-        # self.pick_up(mapped_coordinate)
-        # rospy.sleep(5)
+        rospy.sleep(5)
+
 
 
 if __name__ == '__main__':

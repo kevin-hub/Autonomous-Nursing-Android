@@ -1,16 +1,17 @@
 <launch>
-  <arg name="node_start_delay" default="2.0" />
-  <node name="script" pkg="speech" type="api_setup.sh"/>
+  <!-- <arg name="node_start_delay" default="2.0" /> -->
+  <!-- <node name="script" pkg="speech" type="api_setup.sh"/> -->
   <!-- <node name="CentralNode" pkg="main" type="main.py"/> -->
-  <node name="Listen" pkg="speech" type="g_speech.py"/>
-  <node name="NLP" pkg="speech" type="processing.py" output = "screen"/>
+  <!-- <node name="Listen" pkg="speech" type="g_speech.py"/>
+  <node name="NLP" pkg="speech" type="processing.py" output = "screen"/> -->
 
-  <!-- <node name="my_image_display" pkg="merry_faces" type="main.py"/> -->
+  <node name="my_image_display" pkg="merry_faces" type="main.py"/>
+  <node name="arm_mover" pkg="baxter_arms" type="arms.py" output="screen" />
 
   <!--<node name="rsdk_xdisplay_image" pkg="baxter_examples" type="xdisplay_image.py"/>-->
-<!-- 
-  <node name = "object_detect" pkg = "vision" type = "detect_object_in_rs.py" output = "screen" />
-  <node name = "object_detection_listener" pkg = "vision" type = "subscriber.py" output = "screen" /> -->
+
+  <node name = "object_detect" pkg = "vision" type = "detect_object_in_rs.py" />
+  <node name = "object_detection_listener" pkg = "vision" type = "subscriber.py"/>
 
   <!-- <node name="video_publisher" pkg="visuals" type="publish_face.py"/> -->
   <!-- <node name="image_view" pkg="image_view" type="image_view"><remap from="image" to="robot/xdisplay" /></node> -->

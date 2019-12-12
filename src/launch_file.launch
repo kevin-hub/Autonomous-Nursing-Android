@@ -2,7 +2,7 @@
   <include file="$(find base_movement)/launch/base_movement.launch" />
   <arg name="node_start_delay" default="2.0" />
   <node name="script" pkg="speech" type="api_setup.sh"/>
-  <!-- <node name="CentralNode" pkg="main" type="main.py" output="screen"/> -->
+  <node name="CentralNode" pkg="main" type="main.py" output="screen"/>
   <node name="Listen" pkg="speech" type="g_speech.py"/>
   <node name="NLP" pkg="speech" type="processing.py" output = "screen"/>
 
