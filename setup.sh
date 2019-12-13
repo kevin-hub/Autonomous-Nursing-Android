@@ -1,5 +1,5 @@
 #!/bin/sh
-sudo apt-get update -y # To get the latest package 
+sudo apt-get update -y # To get the latest package
 
 # It is presumed that ROS Kinetic has been installed correctly on the device of choice
 
@@ -26,7 +26,12 @@ sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libp
 
 pip install -r requirements.txt
 
+sudo apt-get install ros-melodic-moveit-commander
+
+# Video and sound dependencies
+sudo apt-ge install sox
 sudo apt-get install ros-kinetic-sound-play -y
+sudo apt-get install ros-kinetic-video-stream-opencv
 
 # Installing the dependencies for sound
 sudo usr/bin/rosdep install sound_play

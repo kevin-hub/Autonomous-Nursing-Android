@@ -24,7 +24,7 @@ baxter_hostname="011401P0008.local"
 # Set *Either* your computers ip address or hostname. Please note if using
 # your_hostname that this must be resolvable to Baxter.
 
-your_ip="192.168.1.109"
+your_ip="146.169.219.214"
 #your_hostname="my_computer.local"
 
 # Specify ROS distribution (e.g. indigo, hydro, etc.)
@@ -108,7 +108,7 @@ variable to reflect your current IP address.\n"
 	if [ -z "${your_ip}" ] && [ -z "${your_hostname}" ]; then
 		echo -ne "EXITING - Please edit this file, modifying to specify \
 your_ip or your_hostname.\n"
-		exit 1	
+		exit 1
 	fi
 	# verify specified ros version is installed
 	ros_setup="/opt/ros/\${ros_version}"

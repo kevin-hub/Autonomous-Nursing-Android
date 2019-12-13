@@ -10,7 +10,7 @@ import tf
 from random import randrange
 
 speech_pub = rospy.Publisher("speech_out", String, queue_size=10)
-# face_pub = rospy.Publisher("file_out", String, queue_size=10)
+face_pub = rospy.Publisher("file_out", String, queue_size=10)
 # emotions = rospy.Publisher("facial_expression_command", String, queue_size=10)
 waypoint_pub = rospy.Publisher('/waypoint',PoseStamped,queue_size=10)
 # arm_commander_pub = rospy.Publisher('/arm_commander',String,queue_size=10)
@@ -55,6 +55,7 @@ def incoming_command_callback(data):
 
     print(words)
 
+# WHY IS THE SLEEP DELETED????
 # Check if awake
     # if "anna" in words or "ayana" in words:
     #     awake = True
@@ -63,7 +64,7 @@ def incoming_command_callback(data):
     # else:
     #     emotions.publish("sleeping")
     #     # return
-    
+
     # if awake == True:
 
     # if nouns > 1:
@@ -83,13 +84,13 @@ def incoming_command_callback(data):
 
     if "name" in words and "what" in words:
         speech_pub.publish("My name is Anna")
-        # face_pub.publish("sorry1.mp4")
-        emotions.publish("approval")
+        face_pub.publish("sorry1.mp4")
+        # emotions.publish("approval")
 
     elif "be" in words and "quiet" in words:
         speech_pub.publish("Okay, I'll leave you for a bit")
-        # face_pub.publish("sorry1.mp4")
-        emotions.publish("sleeping")
+        face_pub.publish("sorry1.mp4")
+        # emotions.publish("sleeping")
         awake = False
 
     # elif 'that' in words and 'there' in words:
@@ -104,7 +105,7 @@ def incoming_command_callback(data):
     #     # face_pub.publish("book.mp4")
     #     #item_loc = base_movement.get_item_location('book')
     #     emotions.publish("happiness")
-    #    
+    #
     elif "thank" in words:
         speech_pub.publish("You're welcome!")
 
@@ -112,20 +113,21 @@ def incoming_command_callback(data):
         speech_pub.publish("Okay, I'll grab the remote")
         print('Grabbing Remote')
         #key = 'bottle'
-        # face_pub.publish("water.mp4")
+        face_pub.publish("water.mp4")
         # emotions.publish("happiness")
         base_movement.publish_waypoint_from_item('remote')
     elif 'bear' in words or 'teddy' in words:
         speech_pub.publish("One teddy bear coming right up")
         print('Grabbing Teddy')
-        # face_pub.publish("bear.mp4")
+        face_pub.publish("bear.mp4")
         # emotions.publish("happiness")
         base_movement.publish_waypoint_from_item('teddy')
     elif 'hello' in words or 'hey' in words:
         speech_pub.publish("Hello There! I hope you're well")
         print('Hello There')
+        face_pub.publish("hello.mp4")
         # emotions.publish("approval")
-        # face_pub.publish("face.mp4")
+
     else:
         select = randrange(3)
         if select == 0:
@@ -134,7 +136,7 @@ def incoming_command_callback(data):
             speech_pub.publish("What was that?")
         elif select == 2:
             speech_pub.publish("I couldn't quite catch that")
-        emotions.publish("confusion")
+        # emotions.publish("confusion")
 
 
     rospy.sleep(0.5)

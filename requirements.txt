@@ -1,10 +1,11 @@
-pocketsphinx
 pyaudio
 catkin_pkg
 rospkg
 pyyaml
 opencv-python
+google-cloud
 google-cloud-speech
+google-cloud-texttospeech
 spacy
 tensorflow==1.14
 object-detection

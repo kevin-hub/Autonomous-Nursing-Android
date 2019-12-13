@@ -44,9 +44,9 @@ class TTSInterfaceClient:
             out.write(response.audio_content)
             print('Audio content written to file "output.mp3"')
 
-        # self.flag_pub.publish(True)
-        # while self.flag_recieved == False:
-        #     time.sleep(0.01)
+        self.flag_pub.publish(True)
+        while self.flag_recieved == False:
+            time.sleep(0.01)
 
         self.sc.playWave(path + 'output.mp3')
         # self. flag_recieved = False

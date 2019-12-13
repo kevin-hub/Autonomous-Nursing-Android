@@ -100,19 +100,19 @@ from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as vis_util
 
 
-# # Model preparation 
+# # Model preparation
 
 # ## Variables
-# 
-# Any model exported using the `export_inference_graph.py` tool can be loaded here simply by changing `PATH_TO_FROZEN_GRAPH` to point to a new .pb file.  
-# 
+#
+# Any model exported using the `export_inference_graph.py` tool can be loaded here simply by changing `PATH_TO_FROZEN_GRAPH` to point to a new .pb file.
+#
 # By default we use an "SSD with Mobilenet" model here. See the [detection model zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md) for a list of other models that can be run out-of-the-box with varying speeds and accuracies.
 
 # In[4]:
 
 MODEL_NAME = 'inference_graph'
-PATH_TO_FROZEN_GRAPH = '/home/prl4/Documents/EE4-Human-Centered-Robotics/src/vision/src/models-master/research/frozen_inference_graph.pb'
-PATH_TO_LABELS = '/home/prl4/Documents/EE4-Human-Centered-Robotics/src/vision/src/models-master/research/labelmap_teddy.pbtxt'
+PATH_TO_FROZEN_GRAPH = '/home/joe/Documents/EE4-Human-Centered-Robotics/src/vision/src/models-master/research/frozen_inference_graph.pb'
+PATH_TO_LABELS = '/home/joe/Documents/EE4-Human-Centered-Robotics/src/vision/src/models-master/research/labelmap_teddy.pbtxt'
 
 # What model to download.
 #MODEL_NAME = 'ssd_mobilenet_v1_coco_2017_11_17'
@@ -196,7 +196,7 @@ median_height = 0
 median_width = 0
 
 confidence_threshold = 90
- 
+
 
 for _ in range(10):
     pipeline.wait_for_frames()
@@ -231,7 +231,7 @@ def run_inference_for_single_image(image, graph):
     output_dict['detection_scores'] = output_dict['detection_scores'][0]
     if 'detection_masks' in output_dict:
         output_dict['detection_masks'] = output_dict['detection_masks'][0]
-        
+
     return output_dict
 
 try:
@@ -253,11 +253,11 @@ try:
                 classNames = ["teddy", "remote", "book"]
 
                 while True:# and waiting_for_detect:
-                    
+
                     frameset = pipeline.wait_for_frames()
                     color_frame = frameset.get_color_frame()
                     depth_frame = frameset.get_depth_frame()
-                    if not depth_frame: continue 
+                    if not depth_frame: continue
 
                     # get pixel values
                     color_image_pixels = np.asanyarray(color_frame.get_data())
@@ -307,7 +307,7 @@ try:
                     xmax = output_dict['detection_boxes'][0][3]
                     ymin = output_dict['detection_boxes'][0][0]
                     ymax = output_dict['detection_boxes'][0][2]
-                    
+
                     width = xmax - xmin
                     height = ymax - ymin
 
@@ -315,7 +315,7 @@ try:
                     y_for_depth = ymin + 0.5*height
 
                     # need to check how to avoid fitting long inside index sized array
-                    detectedClass = classNames[output_dict['detection_classes'][0]-1]                      
+                    detectedClass = classNames[output_dict['detection_classes'][0]-1]
 
                     #scale = height/expected
                     scale=1
@@ -324,7 +324,7 @@ try:
                     xmax_depth = int((xmax * expected) * scale)
                     ymax_depth = int((ymax * expected) * scale)
 
-                    
+
 
                     depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(crop_depth_img, alpha = 0.03), cv2.COLORMAP_JET)
 
@@ -337,7 +337,7 @@ try:
                     # find depth value
                     bounding_box_depth_img = np.asanyarray(aligned_depth_frame.get_data())
                     bounding_box_depth_img = bounding_box_depth_img[xmin_depth:xmax_depth, ymin_depth:ymax_depth].astype(float)
-        
+
                     depth_scale = profile.get_device().first_depth_sensor().get_depth_scale()
                     bounding_box_depth_img = bounding_box_depth_img * depth_scale
 
@@ -351,7 +351,7 @@ try:
 
                     # print('  Width: %f' %(width))
                     # print('  Height: %f' %(height))
-                    
+
                     if (len(object_buffer) < 10):
                     #     # store in buffer
 
@@ -363,7 +363,7 @@ try:
                          # read from buffer (print)
                         #object_index_array  = object_buffer[:]
                         object_index_array = [object_buffer[i].object_index for i in range(10)]
-                        
+
                         #for i in range(10):
                         #  object_index_array[i] = object_buffer[i].object_index
 
@@ -385,7 +385,7 @@ try:
                         median_z = np.median([element.z for element in filtered_array])
                         median_height = np.median([element.height for element in filtered_array])
                         median_width = np.median([element.width for element in filtered_array])
-                        
+
                         #print(modal_label.mode[0])
                         # print('  x: %f' %median_x)
                         # print('  y: %f' %median_y)
@@ -395,8 +395,8 @@ try:
                         # print('  Height: %f' %median_height)
 
                         object_buffer = []
-                        
-                                            
+
+
                         object_detected.object_index = modal_label
                         object_detected.x = median_x
                         object_detected.y = median_y
@@ -427,7 +427,7 @@ try:
 
 
                     images = np.hstack((crop_color_img, depth_colormap))
-                    cv2.imshow('Camera streams', images)                
+                    cv2.imshow('Camera streams', images)
 
                     key = cv2.waitKey(1)
                     if key == key_esc or key & 0xFF == key_q:
