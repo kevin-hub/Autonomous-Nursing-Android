@@ -1,0 +1,3 @@
+<launch>
+    <node name="arm_mover" pkg="baxter_arms" type="arms.py" output="screen" />
+</launch>
