@@ -26,7 +26,12 @@ sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libp
 
 pip install -r requirements.txt
 
+# Arm Movement Dependencies
 sudo apt-get install ros-melodic-moveit-commander
+
+# Base Movement Dependencies
+sudo apt-get install ros-kinetic-ridgeback-navigation
+
 
 # Video and sound dependencies
 sudo apt-ge install sox
