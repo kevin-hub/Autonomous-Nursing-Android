@@ -1,4 +1,4 @@
-# EE4-Human-Centered-Robotics
+# Autonomous Nursing Android
 
 To begin the library you want to initialise the shell script to be able to setup the computer correctly.
 
